@@ -11,7 +11,7 @@ layout: home
 
 Welcome to my  webpage  
 
-I am currently a post-doctoral researcher in Statistics at [University of Padova](https://stat.unipd.it) working with [Prof. Antonio Canale](https://tonycanale.github.io/).
+I am a post-doctoral researcher in Statistics at [University of Padova](https://stat.unipd.it) working with [Prof. Antonio Canale](https://tonycanale.github.io/). I am moving to Barcelona in fall 2024 to join  the [Department of Economics and Business at Universitat Pompeu Fabra](https://sites.google.com/view/stats-upf).
 
  
  
