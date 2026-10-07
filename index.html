@@ -71,7 +71,6 @@
     }
     .nav-links a:hover { color: var(--text); background: var(--accent-soft); text-decoration: none; }
     .nav-links a.active { color: var(--accent); background: var(--accent-soft); }
-    .nav-links .num { opacity: .6; margin-right: 4px; font-variant-numeric: tabular-nums; }
     #menu-btn {
       display: none; background: none; border: 1px solid var(--line); border-radius: 8px;
       color: var(--text); padding: 6px 10px; font-size: 15px; cursor: pointer;
@@ -107,10 +106,6 @@
     }
     .chapter:last-child { min-height: calc(100vh - 60px); }
     .chapter-label { position: sticky; top: 92px; align-self: start; }
-    .chapter-label .num {
-      display: block; font-family: Fraunces, Georgia, serif; font-size: 44px;
-      color: var(--accent); line-height: 1; margin-bottom: 6px;
-    }
     .chapter-label h2 { margin: 0; font-size: 26px; }
     .chapter-body > :first-child { margin-top: 0; }
     .chapter-body h3 { font-size: 20px; margin: 32px 0 12px; }
@@ -179,7 +174,6 @@
       main { padding: 0 16px 60px; }
       .chapter { grid-template-columns: 1fr; gap: 20px; padding: 40px 0; }
       .chapter-label { position: static; display: flex; align-items: baseline; gap: 12px; }
-      .chapter-label .num { font-size: 32px; margin: 0; }
     }
   </style>
 </head>
@@ -191,11 +185,11 @@
       <a class="brand" href="#top">Elena Bortolato</a>
       <button id="menu-btn" aria-expanded="false" aria-controls="nav-links">Menu</button>
       <ul class="nav-links" id="nav-links">
-        <li><a href="#about"><span class="num">01</span>About</a></li>
-        <li><a href="#research"><span class="num">02</span>Research</a></li>
-        <li><a href="#publications"><span class="num">03</span>Publications</a></li>
-        <li><a href="#teaching"><span class="num">04</span>Teaching</a></li>
-        <li><a href="#education"><span class="num">05</span>Education</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#research">Research</a></li>
+        <li><a href="#publications">Publications</a></li>
+        <li><a href="#teaching">Teaching</a></li>
+        <li><a href="#education">Education</a></li>
       </ul>
     </div>
   </nav>
@@ -215,7 +209,7 @@
 
   <main>
     <section class="chapter reveal" id="about">
-      <div class="chapter-label"><span class="num">01</span><h2>About</h2></div>
+      <div class="chapter-label"><h2>About</h2></div>
       <div class="chapter-body">
         <p>I work at CUNEF University in Madrid as Assistant Professor. Before that, I was a post-doctoral researcher in Statistics at Universitat Pompeu Fabra and the Data Science Center of the Barcelona School of Economics.</p>
         <p>I earned my PhD in 2024 under the supervision of prof. Laura Ventura, co-supervised by prof. Pierre E. Jacob (ESSEC) and prof. Robin J. Ryder (Imperial College London).</p>
@@ -223,7 +217,7 @@
     </section>
 
     <section class="chapter reveal" id="research">
-      <div class="chapter-label"><span class="num">02</span><h2>Research</h2></div>
+      <div class="chapter-label"><h2>Research</h2></div>
       <div class="chapter-body">
         <p>My research interests include the following areas. Click a card to read more.</p>
         <div class="cards">
@@ -256,7 +250,7 @@
     </section>
 
     <section class="chapter reveal" id="publications">
-      <div class="chapter-label"><span class="num">03</span><h2>Publications</h2></div>
+      <div class="chapter-label"><h2>Publications</h2></div>
       <div class="chapter-body">
         <p>A full list of publications is available on <a href="https://scholar.google.com/citations?user=wYPuUzMAAAAJ&amp;hl=fr&amp;oi=ao" target="_blank" rel="noopener">Google Scholar</a>, and code can be found on <a href="https://github.com/elenabortolato" target="_blank" rel="noopener">GitHub</a>.</p>
         <h3>Preprints and working papers</h3>
@@ -268,7 +262,7 @@
     </section>
 
     <section class="chapter reveal" id="teaching">
-      <div class="chapter-label"><span class="num">04</span><h2>Teaching</h2></div>
+      <div class="chapter-label"><h2>Teaching</h2></div>
       <div class="chapter-body">
         <h3>Current teaching activity</h3>
         <ul class="items">
@@ -278,7 +272,7 @@
     </section>
 
     <section class="chapter reveal" id="education">
-      <div class="chapter-label"><span class="num">05</span><h2>Education</h2></div>
+      <div class="chapter-label"><h2>Education</h2></div>
       <div class="chapter-body">
         <ul class="items">
           <li><span class="title">PhD in Statistics</span><span class="badge">2024</span><span class="meta">University of Padova. Thesis: <em>Advancements in distribution sampling for statistical inference</em></span></li>
