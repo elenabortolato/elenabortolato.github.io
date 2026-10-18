@@ -129,12 +129,13 @@
 
   <section id="intro">
     <h1>Bussola Politica Italiana</h1>
-    <p class="lead">18 affermazioni sui temi che decideranno il futuro dell'Italia: pensioni, tasse, scuola, energia, Europa. Rispondi d'istinto e scopri dove ti collochi rispetto ai partiti italiani.</p>
+    <p class="lead">20 affermazioni sui temi che decideranno il futuro dell'Italia: pensioni, tasse, scuola, energia, Europa. Rispondi d'istinto e scopri dove ti collochi rispetto ai partiti italiani.</p>
     <div class="card">
-      <p style="margin-top:0">Ogni risposta ti sposta su due assi:</p>
+      <p style="margin-top:0">Ogni risposta ti sposta su tre assi:</p>
       <ul>
         <li><strong>Economia</strong> — dallo <em>Stato</em> che interviene e protegge al <em>mercato</em> e alla concorrenza.</li>
         <li><strong>Europa e apertura</strong> — dal <em>sovranismo</em> all'<em>europeismo</em> e all'apertura internazionale.</li>
+        <li><strong>Metodo</strong> — dalla <em>vecchia politica</em> di bonus e consenso alla <em>discontinuità</em>, con competenza e dati.</li>
       </ul>
       <button class="btn" id="start">Inizia il test</button>
     </div>
@@ -158,6 +159,10 @@
     <p class="lead" id="summary"></p>
     <div class="card">
       <svg id="compass" viewBox="0 0 440 440" role="img" aria-label="Bussola politica con la tua posizione e quella dei partiti"></svg>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Terzo asse: il metodo</h2>
+      <svg id="zaxis" viewBox="0 0 440 180" role="img" aria-label="Asse vecchia politica – discontinuità con la tua posizione e quella dei partiti"></svg>
     </div>
     <div class="grid2">
       <div class="card">
@@ -191,22 +196,23 @@
 <script>
 // x: -10 = Stato / intervento pubblico, +10 = mercato / concorrenza
 // y: -10 = sovranismo / chiusura, +10 = europeismo / apertura
+// z: -10 = vecchia politica, +10 = discontinuità e competenza
 const PARTIES = [
-  { name: "ORA!",                      x:  7.0, y:  8.0, color: "#ea580c", short: "ORA!", anchor: "start", dx: 10, dy: -7 },
-  { name: "Partito Liberaldemocratico", x:  6.0, y:  7.0, color: "#0ea5e9", short: "PLD", anchor: "start", dx: 9, dy: 4 },
-  { name: "+Europa",                   x:  4.0, y:  9.0, color: "#c026d3", short: "+Europa", anchor: "start", dx: 9, dy: 4 },
-  { name: "Azione",                    x:  3.5, y:  6.5, color: "#1d4ed8", short: "Azione", anchor: "start", dx: 9, dy: 12 },
-  { name: "Italia Viva",               x:  2.5, y:  7.0, color: "#db2777", short: "IV", anchor: "end", dx: -9, dy: 4 },
-  { name: "Forza Italia",              x:  4.0, y:  4.5, color: "#2563eb", short: "FI", anchor: "start", dx: 9, dy: 4 },
-  { name: "Noi Moderati",              x:  2.0, y:  2.5, color: "#0891b2", short: "Noi Moderati", anchor: "start", dx: 9, dy: 4 },
-  { name: "Partito Democratico",       x: -3.0, y:  6.0, color: "#dc2626", short: "PD", anchor: "end", dx: -9, dy: 4 },
-  { name: "Fratelli d'Italia",         x:  0.5, y: -3.5, color: "#1e3a8a", short: "FdI", anchor: "start", dx: 9, dy: 4 },
-  { name: "Lega",                      x:  0.5, y: -7.0, color: "#16a34a", short: "Lega", anchor: "start", dx: 9, dy: 4 },
-  { name: "Movimento 5 Stelle",        x: -5.0, y: -3.0, color: "#ca8a04", short: "M5S", anchor: "start", dx: 9, dy: 4 },
-  { name: "Alleanza Verdi e Sinistra", x: -7.5, y:  2.5, color: "#65a30d", short: "AVS", anchor: "start", dx: 9, dy: 4 },
+  { name: "ORA!",                      x:  7.0, y:  8.0, z:  8.0, color: "#ea580c", short: "ORA!", anchor: "start", dx: 10, dy: -7 },
+  { name: "Partito Liberaldemocratico", x:  6.0, y:  7.0, z:  1.0, color: "#0ea5e9", short: "PLD", anchor: "start", dx: 9, dy: 4 },
+  { name: "+Europa",                   x:  4.0, y:  9.0, z: -4.0, color: "#c026d3", short: "+Europa", anchor: "start", dx: 9, dy: 4 },
+  { name: "Azione",                    x:  3.5, y:  6.5, z: -3.0, color: "#1d4ed8", short: "Azione", anchor: "start", dx: 9, dy: 12 },
+  { name: "Italia Viva",               x:  2.5, y:  7.0, z: -5.0, color: "#db2777", short: "IV", anchor: "end", dx: -9, dy: 4 },
+  { name: "Forza Italia",              x:  4.0, y:  4.5, z: -7.0, color: "#2563eb", short: "FI", anchor: "start", dx: 9, dy: 4 },
+  { name: "Noi Moderati",              x:  2.0, y:  2.5, z: -7.0, color: "#0891b2", short: "Noi Moderati", zshort: "NM", anchor: "start", dx: 9, dy: 4 },
+  { name: "Partito Democratico",       x: -3.0, y:  6.0, z: -6.0, color: "#dc2626", short: "PD", anchor: "end", dx: -9, dy: 4 },
+  { name: "Fratelli d'Italia",         x:  0.5, y: -3.5, z: -4.0, color: "#1e3a8a", short: "FdI", anchor: "start", dx: 9, dy: 4 },
+  { name: "Lega",                      x:  0.5, y: -7.0, z: -6.0, color: "#16a34a", short: "Lega", anchor: "start", dx: 9, dy: 4 },
+  { name: "Movimento 5 Stelle",        x: -5.0, y: -3.0, z: -3.0, color: "#ca8a04", short: "M5S", anchor: "start", dx: 9, dy: 4 },
+  { name: "Alleanza Verdi e Sinistra", x: -7.5, y:  2.5, z: -4.0, color: "#65a30d", short: "AVS", anchor: "start", dx: 9, dy: 4 },
 ];
 
-// axis: "x" | "y"; dir: +1 se essere d'accordo sposta verso mercato / europeismo.
+// axis: "x" | "y" | "z"; dir: +1 se essere d'accordo sposta verso mercato / europeismo / discontinuità.
 // ora: +1 se la tesi corrisponde alla posizione di ORA!, -1 se ORA! è contraria.
 const QUESTIONS = [
   { topic: "Pensioni", axis: "x", dir: 1, ora: 1,
@@ -220,18 +226,26 @@ const QUESTIONS = [
     text: "Le tasse sul lavoro vanno tagliate in modo deciso, finanziando il taglio con la riduzione della spesa pubblica improduttiva.",
     context: "Il cuneo fiscale italiano è tra i più alti dell'OCSE.",
     thesis: "Spostare il carico fiscale via dal lavoro e ridurre il cuneo" },
-  { topic: "Spesa pubblica", axis: "x", dir: 1, ora: 1,
+  { topic: "Spesa pubblica", axis: "z", dir: 1, ora: 1,
     text: "Il Superbonus 110% è stato un furto ai danni dei contribuenti, di cui tutti i partiti sono corresponsabili.",
     context: "La misura è costata oltre 100 miliardi di euro ed è stata approvata e prorogata con il sostegno di quasi tutto il Parlamento.",
     thesis: "Basta bonus a pioggia come il Superbonus" },
-  { topic: "Giovani", axis: "x", dir: 1, ora: 1,
+  { topic: "Giovani", axis: "z", dir: 1, ora: 1,
     text: "I giovani lasciano l'Italia perché le tasse sul lavoro sono troppo alte, a causa di continui bonus, mance elettorali e di un sistema pensionistico arretrato.",
     context: "Ogni anno decine di migliaia di giovani, molti laureati, si trasferiscono all'estero.",
     thesis: "Meno spesa clientelare, meno tasse sul lavoro dei giovani" },
-  { topic: "Classe politica", axis: "x", dir: 1, ora: 1,
+  { topic: "Classe politica", axis: "z", dir: 1, ora: 1,
     text: "Il Movimento 5 Stelle ha tradito lo scopo per cui era nato: aveva individuato problemi reali, ma la sua classe dirigente non era all'altezza di proporre soluzioni efficaci e basate sui dati.",
     context: "Nato nel 2009 contro la \"casta\", il M5S ha poi governato con la Lega, con il PD e nel governo Draghi.",
     thesis: "Una classe dirigente competente e politiche basate sui dati" },
+  { topic: "Classe politica", axis: "z", dir: 1, ora: 1,
+    text: "I partiti che hanno governato negli ultimi vent'anni non sono in grado di fare le riforme di cui l'Italia ha bisogno: serve una forza politica nuova.",
+    context: "Dal 2000 il PIL pro capite italiano è praticamente fermo, mentre quello degli altri grandi paesi europei è cresciuto.",
+    thesis: "Una forza politica nuova, di proposta e non di protesta" },
+  { topic: "Metodo", axis: "z", dir: 1, ora: 1,
+    text: "Ogni nuova legge dovrebbe essere valutata prima e dopo con dati e analisi indipendenti, eliminando le misure che non funzionano.",
+    context: "In Italia la valutazione delle politiche pubbliche è rara e spesso fatta da chi le ha proposte.",
+    thesis: "Politiche pubbliche valutate con dati e analisi indipendenti" },
   { topic: "Imprese", axis: "x", dir: 1, ora: 1,
     text: "Lo Stato non dovrebbe usare soldi pubblici per salvare aziende in crisi che non stanno in piedi da sole.",
     context: "Negli anni sono stati spesi miliardi per casi come Alitalia ed ex Ilva." },
@@ -318,7 +332,7 @@ function renderQuestion() {
 }
 
 function computePosition() {
-  const sum = { x: 0, y: 0 }, max = { x: 0, y: 0 };
+  const sum = { x: 0, y: 0, z: 0 }, max = { x: 0, y: 0, z: 0 };
   QUESTIONS.forEach((q, i) => {
     sum[q.axis] += (answers[i] ?? 0) * q.dir;
     max[q.axis] += 2;
@@ -326,7 +340,7 @@ function computePosition() {
   // Le risposte moderate tendono a schiacciare il punteggio al centro:
   // la radice quadrata lo riporta sulla scala delle posizioni dei partiti.
   const stretch = r => Math.sign(r) * Math.sqrt(Math.abs(r)) * 10;
-  return { x: stretch(sum.x / max.x), y: stretch(sum.y / max.y) };
+  return { x: stretch(sum.x / max.x), y: stretch(sum.y / max.y), z: stretch(sum.z / max.z) };
 }
 
 function oraAgreement() {
@@ -336,8 +350,8 @@ function oraAgreement() {
 }
 
 function affinity(p, me) {
-  const d = Math.hypot(p.x - me.x, p.y - me.y);
-  return Math.max(0, Math.round(100 * (1 - d / Math.hypot(20, 20))));
+  const d = Math.hypot(p.x - me.x, p.y - me.y, p.z - me.z);
+  return Math.max(0, Math.round(100 * (1 - d / Math.hypot(20, 20, 20))));
 }
 
 function drawCompass(me) {
@@ -371,9 +385,34 @@ function drawCompass(me) {
   $("compass").innerHTML = g;
 }
 
+function drawZAxis(me) {
+  const W = 440, pad = 24, line = 70;
+  const px = z => pad + ((z + 10) / 20) * (W - 2 * pad);
+  let g = `<defs><linearGradient id="zgrad" x1="0" x2="1">
+    <stop offset="0" stop-color="var(--muted)" stop-opacity=".35"/>
+    <stop offset="1" stop-color="var(--accent)"/></linearGradient></defs>`;
+  g += `<rect x="${pad}" y="${line - 3}" width="${W - 2 * pad}" height="6" rx="3" fill="url(#zgrad)"/>`;
+  g += `<text class="compass-label" x="${pad}" y="20">← VECCHIA POLITICA</text>`;
+  g += `<text class="compass-label" x="${W - pad}" y="20" text-anchor="end">DISCONTINUITÀ · DATI →</text>`;
+  // impila le etichette su più righe per evitare sovrapposizioni
+  const rowEnds = [];
+  [...PARTIES].sort((a, b) => a.z - b.z).forEach(p => {
+    const x = px(p.z), label = p.zshort || p.short, w = label.length * 7;
+    let row = rowEnds.findIndex(end => end < x - w / 2 - 4);
+    if (row === -1) row = rowEnds.length;
+    rowEnds[row] = x + w / 2;
+    g += `<circle cx="${x}" cy="${line}" r="${p.name === "ORA!" ? 7 : 5}" fill="${p.color}" stroke="var(--surface)" stroke-width="2"/>`;
+    g += `<text class="party-label" x="${x}" y="${line + 22 + row * 14}" text-anchor="middle" fill="${p.color}">${label}</text>`;
+  });
+  g += `<circle cx="${px(me.z)}" cy="${line}" r="10" fill="none" stroke="var(--accent)" stroke-width="3"/>`;
+  g += `<text class="you-label" x="${px(me.z)}" y="${line - 18}" text-anchor="middle">TU</text>`;
+  $("zaxis").innerHTML = g;
+}
+
 function showResult() {
   const me = computePosition();
   drawCompass(me);
+  drawZAxis(me);
 
   const ranked = PARTIES.map(p => ({ ...p, a: affinity(p, me) })).sort((a, b) => b.a - a.a);
   $("ranking").innerHTML = ranked.slice(0, 6).map(p =>
@@ -387,10 +426,13 @@ function showResult() {
     .filter(o => o.q.thesis && o.v > 0)
     .map(o => `<li>${o.q.thesis}</li>`).join("") || "<li>Nessuna tesi condivisa… per ora!</li>";
 
-  const ex = me.x >= 0 ? "il mercato e la concorrenza" : "l'intervento dello Stato";
-  const ey = me.y >= 0 ? "europeista e aperto" : "sovranista";
+  const pick = (v, pos, neg, mid) => v > 1 ? pos : v < -1 ? neg : mid;
+  const ex = pick(me.x, "il mercato e la concorrenza", "l'intervento dello Stato", "un equilibrio tra Stato e mercato");
+  const ey = pick(me.y, "europeista e aperto", "sovranista", "intermedio sull'Europa");
+  const ez = pick(me.z, "Vuoi una politica nuova, basata su competenze e dati.",
+    "Ti fidi della politica tradizionale.", "Sul modo di fare politica non hai una posizione netta.");
   $("summary").textContent =
-    `Preferisci ${ex} e hai un orientamento ${ey}. Il partito più vicino a te è ${ranked[0].name}.`;
+    `Preferisci ${ex} e hai un orientamento ${ey}. ${ez} Il partito più vicino a te è ${ranked[0].name}.`;
   $("bar").style.width = "100%";
   show("result");
 }
