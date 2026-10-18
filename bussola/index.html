@@ -129,7 +129,7 @@
 
   <section id="intro">
     <h1>Bussola Politica Italiana</h1>
-    <p class="lead">24 affermazioni sui temi che decideranno il futuro dell'Italia: pensioni, tasse, scuola, energia, Europa. Rispondi d'istinto e scopri dove ti collochi rispetto ai partiti italiani.</p>
+    <p class="lead">26 affermazioni sui temi che decideranno il futuro dell'Italia: pensioni, tasse, scuola, energia, Europa. Rispondi d'istinto e scopri dove ti collochi rispetto ai partiti italiani.</p>
     <div class="card">
       <p style="margin-top:0">Ogni risposta ti sposta su tre assi:</p>
       <ul>
@@ -263,6 +263,14 @@ const QUESTIONS = [
     text: "L'ISEE è facilmente aggirabile: non può essere l'unico parametro per decidere chi frequenta l'università gratis o riceve aiuti pubblici.",
     context: "Redditi in nero, patrimoni non dichiarati o intestati ad altri possono abbassare l'ISEE di chi non ne avrebbe diritto.",
     thesis: "Controlli incrociati sui dati: aiuti a chi ne ha davvero bisogno" },
+  { topic: "Fisco", axis: "z", dir: 1, ora: 1,
+    text: "Il fisco italiano è una giungla di detrazioni, esoneri, regimi agevolati e soglie ISEE: andrebbe eliminata la gran parte delle agevolazioni per abbassare le aliquote a tutti.",
+    context: "Le agevolazioni fiscali in vigore sono oltre 600 e valgono circa 100 miliardi di euro l'anno di minori entrate.",
+    thesis: "Un fisco semplice: meno agevolazioni, aliquote più basse per tutti" },
+  { topic: "Famiglie", axis: "x", dir: -1, ora: 1,
+    text: "Il congedo di paternità dovrebbe essere lungo, obbligatorio e retribuito come quello di maternità, con gli stessi diritti per chi adotta o ha un figlio in affido.",
+    context: "Oggi il congedo obbligatorio è di 5 mesi per le madri e di soli 10 giorni lavorativi per i padri, anche in caso di adozione o affido.",
+    thesis: "Congedi paritari tra madri e padri, anche per chi adotta" },
   { topic: "Imprese", axis: "x", dir: 1, ora: 1,
     text: "Lo Stato non dovrebbe usare soldi pubblici per salvare aziende in crisi che non stanno in piedi da sole.",
     context: "Negli anni sono stati spesi miliardi per casi come Alitalia ed ex Ilva." },
