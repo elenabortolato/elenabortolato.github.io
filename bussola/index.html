@@ -99,6 +99,16 @@
     #cube { touch-action: pan-y; cursor: grab; user-select: none; overflow: visible; }
     #cube:active { cursor: grabbing; }
     .hint { color: var(--muted); font-size: .85rem; margin: -6px 0 8px; }
+    #voterParty { font: 600 1rem Inter, sans-serif; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; }
+    .voter-summary { margin: 14px 0 8px; }
+    .voter-list { list-style: none; padding: 0; margin: 0; }
+    .voter-list li { padding: 12px 0; border-top: 1px solid var(--line); font-size: .93rem; }
+    .voter-list .q { margin: 0 0 6px; }
+    .voter-list .cmp { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--muted); font-size: .85rem; }
+    .voter-list .cmp b { color: var(--text); font-weight: 600; }
+    .voter-list .tag { font-weight: 600; }
+    .voter-list .same { color: #16a34a; }
+    .voter-list .diff { color: #dc2626; }
     h3 { font: 600 .8rem Inter, sans-serif; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 16px 0 0; }
 
     .ranking { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
@@ -156,8 +166,14 @@
       <button class="btn ghost" id="restart">Rifai il test</button>
       <button class="btn" id="share">Condividi</button>
     </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Come avrebbe risposto l'elettore tipo di…</h2>
+      <select id="voterParty" aria-label="Scegli un partito"></select>
+      <p class="voter-summary" id="voterSummary"></p>
+      <ol class="voter-list" id="voterList"></ol>
+    </div>
     <p class="note">
-      Le posizioni dei partiti sono stime indicative basate su programmi e dichiarazioni pubbliche, non posizioni ufficiali.
+      Le posizioni dei partiti e le risposte dell'elettore tipo sono stime indicative basate su programmi e dichiarazioni pubbliche, non posizioni ufficiali.
     </p>
   </section>
 
@@ -186,109 +202,143 @@ const PARTIES = [
 // axis: "x" | "y" | "z"; dir: +1 se essere d'accordo sposta verso mercato / europeismo / discontinuità.
 // ora: +1 se l'affermazione corrisponde alla posizione di ORA!, -1 se ORA! è contraria.
 const QUESTIONS = [
-  { topic: "Pensioni", axis: "x", dir: 1, ora: 1,
+  { id: "pensioni", topic: "Pensioni", axis: "x", dir: 1, ora: 1,
     text: "Le pensioni dovrebbero essere calcolate in base ai contributi versati, mantenendo tutele specifiche per chi non può lavorare per invalidità o ha svolto lavori usuranti.",
     context: "L'Italia spende per le pensioni più di qualsiasi altro grande paese europeo in rapporto al PIL." },
-  { topic: "Pensioni", axis: "x", dir: -1, ora: -1,
+  { id: "quota100", topic: "Pensioni", axis: "x", dir: -1, ora: -1,
     text: "Le pensioni anticipate come Quota 100 e Quota 103 andrebbero mantenute.",
     context: "Le uscite anticipate pesano sui conti pubblici e quindi sulle generazioni più giovani." },
-  { topic: "Tasse", axis: "x", dir: 1, ora: 1,
+  { id: "tasse", topic: "Tasse", axis: "x", dir: 1, ora: 1,
     text: "Per ridurre le tasse sul lavoro bisogna tagliare la spesa pubblica improduttiva.",
     context: "Il cuneo fiscale italiano è tra i più alti dell'OCSE." },
-  { topic: "Spesa pubblica", axis: "x", dir: -1, ora: -1,
+  { id: "superbonus", topic: "Spesa pubblica", axis: "x", dir: -1, ora: -1,
     text: "Il Superbonus 110% è stato un buon investimento per l'economia italiana.",
     context: "La misura è costata oltre 100 miliardi di euro." },
-  { topic: "Classe politica", axis: "z", dir: 1, ora: 1,
+  { id: "superbonusColpe", topic: "Classe politica", axis: "z", dir: 1, ora: 1,
     text: "Del costo del Superbonus sono responsabili quasi tutti i partiti, non solo chi lo ha introdotto.",
     context: "Il Superbonus è stato introdotto nel 2020 e poi prorogato e modificato da governi di colori diversi." },
-  { topic: "Giovani", axis: "z", dir: 1, ora: 1,
+  { id: "bonusGiovani", topic: "Giovani", axis: "z", dir: 1, ora: 1,
     text: "Negli ultimi anni i governi hanno speso in bonus e misure elettorali risorse che servivano ai giovani.",
     context: "Ogni anno decine di migliaia di giovani, molti laureati, si trasferiscono all'estero." },
-  { topic: "Classe politica", axis: "z", dir: 1, ora: 1,
+  { id: "m5s", topic: "Classe politica", axis: "z", dir: 1, ora: 1,
     text: "Al governo, il Movimento 5 Stelle non è stato all'altezza dei problemi che denunciava.",
     context: "Nato nel 2009 contro la \"casta\", il M5S ha poi governato con la Lega, con il PD e nel governo Draghi." },
-  { topic: "Classe politica", axis: "z", dir: -1, ora: -1,
+  { id: "partiti", topic: "Classe politica", axis: "z", dir: -1, ora: -1,
     text: "I partiti che hanno governato negli ultimi vent'anni hanno l'esperienza necessaria per fare le riforme di cui l'Italia ha bisogno.",
     context: "Dal 2000 il PIL pro capite italiano è praticamente fermo, mentre quello degli altri grandi paesi europei è cresciuto." },
-  { topic: "Metodo", axis: "z", dir: 1, ora: 1,
+  { id: "valutazione", topic: "Metodo", axis: "z", dir: 1, ora: 1,
     text: "Le misure pubbliche che una valutazione indipendente giudica inefficaci dovrebbero essere abolite.",
     context: "In Italia la valutazione delle politiche pubbliche è rara e spesso fatta da chi le ha proposte." },
-  { topic: "Istruzione", axis: "x", dir: -1, ora: 1,
+  { id: "istruzione", topic: "Istruzione", axis: "x", dir: -1, ora: 1,
     text: "La spesa pubblica per istruzione e ricerca dovrebbe aumentare.",
     context: "L'Italia spende per istruzione e ricerca meno della media europea in rapporto al PIL." },
-  { topic: "Demografia", axis: "x", dir: -1, ora: 1,
+  { id: "asili", topic: "Demografia", axis: "x", dir: -1, ora: 1,
     text: "Lo Stato dovrebbe investire molto di più in asili nido.",
     context: "Nel 2024 in Italia sono nati meno di 370.000 bambini, il minimo dall'Unità." },
-  { topic: "Industria", axis: "x", dir: -1, ora: 1,
+  { id: "industria", topic: "Industria", axis: "x", dir: -1, ora: 1,
     text: "Serve una politica industriale pubblica che indirizzi gli investimenti verso i settori tecnologici strategici.",
     context: "La produttività italiana è ferma da oltre vent'anni." },
-  { topic: "Welfare", axis: "z", dir: -1, ora: -1,
+  { id: "isee", topic: "Welfare", axis: "z", dir: -1, ora: -1,
     text: "L'ISEE è uno strumento adeguato per decidere chi ha diritto ad aiuti pubblici come l'università gratuita.",
     context: "Redditi in nero, patrimoni non dichiarati o intestati ad altri possono abbassare l'ISEE di chi non ne avrebbe diritto." },
-  { topic: "Fisco", axis: "z", dir: 1, ora: 1,
+  { id: "fisco", topic: "Fisco", axis: "z", dir: 1, ora: 1,
     text: "Meglio eliminare gran parte di detrazioni, esoneri e regimi agevolati in cambio di aliquote più basse per tutti.",
     context: "Le agevolazioni fiscali in vigore sono oltre 600 e valgono circa 100 miliardi di euro l'anno di minori entrate." },
-  { topic: "Famiglie", axis: "x", dir: -1, ora: 1,
+  { id: "congedi", topic: "Famiglie", axis: "x", dir: -1, ora: 1,
     text: "Padri e madri dovrebbero avere lo stesso congedo obbligatorio e retribuito, di 5 mesi ciascuno, anche in caso di adozione o affido.",
     context: "Oggi il congedo obbligatorio è di 5 mesi per le madri e di soli 10 giorni lavorativi per i padri, anche in caso di adozione o affido." },
-  { topic: "Imprese", axis: "x", dir: -1, ora: -1,
+  { id: "salvataggi", topic: "Imprese", axis: "x", dir: -1, ora: -1,
     text: "Lo Stato fa bene a usare soldi pubblici per salvare grandi aziende in crisi, come l'ex Ilva.",
     context: "Negli anni sono stati spesi miliardi per casi come Alitalia ed ex Ilva." },
-  { topic: "Concorrenza", axis: "x", dir: -1, ora: -1,
+  { id: "balneari", topic: "Concorrenza", axis: "x", dir: -1, ora: -1,
     text: "Le concessioni balneari andrebbero rinnovate ai gestori attuali, senza gare.",
     context: "L'UE chiede da anni all'Italia di mettere a gara le concessioni balneari." },
-  { topic: "Pubblica amministrazione", axis: "x", dir: -1, ora: -1,
+  { id: "pa", topic: "Pubblica amministrazione", axis: "x", dir: -1, ora: -1,
     text: "Nella pubblica amministrazione stipendi e carriere dovrebbero continuare a dipendere soprattutto dall'anzianità.",
     context: "Oggi la quasi totalità dei dipendenti pubblici ottiene la valutazione massima." },
-  { topic: "Lavoro", axis: "x", dir: -1, ora: -1,
+  { id: "salarioMinimo", topic: "Lavoro", axis: "x", dir: -1, ora: -1,
     text: "Un salario minimo fissato per legge è lo strumento migliore contro il lavoro povero.",
     context: "Salari bassi e produttività ferma da 25 anni sono due facce dello stesso problema." },
-  { topic: "Università", axis: "x", dir: 1, ora: 1,
+  { id: "universita", topic: "Università", axis: "x", dir: 1, ora: 1,
     text: "I fondi alle università pubbliche dovrebbero dipendere dalla qualità della ricerca e della didattica.",
     context: "Nessun ateneo italiano è tra i primi 100 nelle principali classifiche mondiali." },
-  { topic: "Scuola", axis: "z", dir: -1, ora: -1,
+  { id: "scuola", topic: "Scuola", axis: "z", dir: -1, ora: -1,
     text: "È giusto che la scelta tra licei, tecnici e professionali avvenga a 14 anni.",
     context: "Oggi si sceglie l'indirizzo a 14 anni: la scelta dipende molto dal titolo di studio dei genitori e alle prove INVALSI gli studenti dei professionali restano molto indietro rispetto a quelli dei licei." },
-  { topic: "Giustizia", axis: "z", dir: 1, ora: 1,
+  { id: "giustizia", topic: "Giustizia", axis: "z", dir: 1, ora: 1,
     text: "Ogni grado di giudizio dovrebbe avere una durata massima stabilita per legge.",
     context: "Secondo il Quadro di valutazione UE della giustizia, i processi civili italiani sono tra i più lenti dell'Unione europea." },
-  { topic: "Sanità", axis: "x", dir: -1, ora: 1,
+  { id: "sanitaSpesa", topic: "Sanità", axis: "x", dir: -1, ora: 1,
     text: "La spesa pubblica per la sanità dovrebbe aumentare fino al livello degli altri grandi paesi europei.",
     context: "La spesa sanitaria pubblica è di circa 2.900 euro a persona in Italia, contro circa 4.400 in Francia e oltre 5.800 in Germania." },
-  { topic: "Sanità", axis: "x", dir: 1, ora: 1,
+  { id: "sanitaPrivato", topic: "Sanità", axis: "x", dir: 1, ora: 1,
     text: "Il Servizio sanitario nazionale dovrebbe usare di più le strutture private convenzionate per ridurre le liste d'attesa.",
     context: "Per molte visite ed esami nel pubblico si aspettano mesi, e sempre più persone pagano di tasca propria o rinunciano a curarsi." },
-  { topic: "Energia", axis: "x", dir: -1, ora: -1,
+  { id: "nucleare", topic: "Energia", axis: "x", dir: -1, ora: -1,
     text: "L'Italia dovrebbe puntare solo sulle rinnovabili, senza tornare al nucleare.",
     context: "L'Italia importa gran parte dell'energia che consuma, anche dalla Francia, che usa il nucleare." },
-  { topic: "Europa", axis: "y", dir: 1, ora: 1,
+  { id: "difesaUe", topic: "Europa", axis: "y", dir: 1, ora: 1,
     text: "L'Unione europea dovrebbe avere una difesa comune.",
     context: "Da soli, i paesi europei pesano poco di fronte a Stati Uniti, Cina e Russia." },
-  { topic: "Europa", axis: "y", dir: -1, ora: -1,
+  { id: "veto", topic: "Europa", axis: "y", dir: -1, ora: -1,
     text: "Ogni Stato dovrebbe mantenere il diritto di veto nelle decisioni dell'Unione europea.",
     context: "Oggi un solo governo può bloccare sanzioni, aiuti o riforme volute da tutti gli altri." },
-  { topic: "Europa", axis: "y", dir: -1, ora: -1,
+  { id: "primato", topic: "Europa", axis: "y", dir: -1, ora: -1,
     text: "Quando le norme nazionali e quelle europee sono in conflitto, dovrebbero prevalere quelle italiane.",
     context: "" },
-  { topic: "Politica estera", axis: "y", dir: -1, ora: -1,
+  { id: "ucraina", topic: "Politica estera", axis: "y", dir: -1, ora: -1,
     text: "L'Italia dovrebbe smettere di inviare armi all'Ucraina.",
     context: "" },
-  { topic: "Politica estera", axis: "y", dir: 1, ora: 1,
+  { id: "trumpPutin", topic: "Politica estera", axis: "y", dir: 1, ora: 1,
     text: "Un accordo di pace tra Trump e Putin che lasci alla Russia i territori occupati sarebbe inaccettabile.",
     context: "Con Trump gli Stati Uniti hanno ridotto il sostegno all'Ucraina e hanno trattato direttamente con la Russia sul futuro della guerra." },
-  { topic: "Politica estera", axis: "y", dir: 1, ora: 1,
+  { id: "palestina", topic: "Politica estera", axis: "y", dir: 1, ora: 1,
     text: "L'Italia dovrebbe riconoscere lo Stato di Palestina.",
     context: "Francia, Regno Unito, Spagna e altri paesi europei hanno già riconosciuto lo Stato di Palestina." },
-  { topic: "Diritti civili", axis: "y", dir: -1, ora: -1,
+  { id: "fineVita", topic: "Diritti civili", axis: "y", dir: -1, ora: -1,
     text: "Il suicidio medicalmente assistito non dovrebbe essere permesso in Italia.",
     context: "Nel 2019 la Corte costituzionale ha reso lecito il suicidio assistito a precise condizioni e ha chiesto al Parlamento di approvare una legge." },
-  { topic: "Demografia", axis: "y", dir: -1, ora: -1,
+  { id: "immigrazione", topic: "Demografia", axis: "y", dir: -1, ora: -1,
     text: "L'Italia dovrebbe ridurre il più possibile l'immigrazione, anche quella regolare.",
     context: "Ogni anno la popolazione in età lavorativa si riduce di centinaia di migliaia di persone." },
-  { topic: "Commercio", axis: "y", dir: -1, ora: -1,
+  { id: "mercosur", topic: "Commercio", axis: "y", dir: -1, ora: -1,
     text: "L'Italia dovrebbe opporsi all'accordo di libero scambio UE-Mercosur per proteggere i propri agricoltori.",
     context: "L'Italia è la seconda manifattura d'Europa e vive di esportazioni." },
 ];
+
+// Risposta stimata dell'elettore tipo (-2 = molto in disaccordo … +2 = molto d'accordo).
+// Di default deriva dalla posizione del partito sull'asse della domanda; qui sotto
+// le eccezioni in cui l'asse da solo darebbe una risposta lontana dalla posizione nota.
+const VOTER_OVERRIDES = {
+  superbonus:    { "M5S": 2, "AVS": 1, "PD": 0, "FdI": -2, "Lega": -1, "FI": 0, "Noi Moderati": -1, "FN": -1, "Azione": -2, "IV": -1, "+Europa": -2, "PLD": -2 },
+  m5s:           { "M5S": -2, "AVS": 0, "PD": 0, "FdI": 2, "Lega": 1, "FI": 2, "Noi Moderati": 2, "FN": 1, "Azione": 2, "IV": 2, "+Europa": 2, "PLD": 2 },
+  pensioni:      { "Lega": -1, "M5S": -1, "AVS": -1 },
+  quota100:      { "Lega": 2, "M5S": 1, "FdI": 0, "FN": 1, "AVS": 1, "PD": 0, "FI": -1, "Noi Moderati": 0, "Azione": -2, "IV": -2, "+Europa": -2, "PLD": -2 },
+  salarioMinimo: { "PD": 2, "M5S": 2, "AVS": 2, "Azione": 1, "+Europa": 1, "IV": 0, "FdI": -2, "Lega": -1, "FI": -2, "Noi Moderati": -1, "FN": 0, "PLD": -1 },
+  salvataggi:    { "FdI": 1, "Lega": 1, "PD": 1, "M5S": 1, "AVS": 2, "FN": 1, "Azione": 0, "FI": 0, "IV": 0, "+Europa": -1, "PLD": -2 },
+  balneari:      { "FdI": 1, "Lega": 2, "FI": 2, "Noi Moderati": 1, "FN": 1, "M5S": 0, "PD": -1, "AVS": -1, "Azione": -2, "IV": -1, "+Europa": -2, "PLD": -2 },
+  nucleare:      { "FdI": -1, "Lega": -2, "FI": -2, "Noi Moderati": -1, "FN": -2, "Azione": -2, "IV": -1, "+Europa": -1, "PLD": -2, "PD": 1, "M5S": 2, "AVS": 2 },
+  fisco:         { "Lega": 1, "FI": 1, "FN": 0, "AVS": -2, "M5S": -1, "PD": -1 },
+  asili:         { "FdI": 1, "Lega": 1, "FN": 1, "FI": 1 },
+  congedi:       { "AVS": 2, "PD": 2, "M5S": 1, "+Europa": 2, "IV": 1, "Azione": 1, "FdI": -1, "Lega": -1, "FN": -2, "FI": 0, "Noi Moderati": 0, "PLD": 1 },
+  sanitaPrivato: { "Lega": 1, "FI": 2, "FdI": 1, "PD": -1, "M5S": -1, "AVS": -2 },
+  difesaUe:      { "FdI": 0, "Lega": -1, "FN": -2, "M5S": -1, "AVS": -1, "PD": 1, "FI": 2, "Noi Moderati": 1, "Azione": 2, "IV": 2, "+Europa": 2, "PLD": 2 },
+  veto:          { "FdI": 1, "Lega": 2, "FN": 2, "M5S": 1, "AVS": 0, "PD": -1, "FI": -1, "Noi Moderati": 0, "Azione": -2, "IV": -2, "+Europa": -2, "PLD": -2 },
+  ucraina:       { "FdI": -2, "FI": -2, "Noi Moderati": -2, "Lega": 1, "FN": 2, "M5S": 2, "AVS": 2, "PD": -1, "Azione": -2, "IV": -2, "+Europa": -2, "PLD": -2 },
+  trumpPutin:    { "FdI": 0, "Lega": -1, "FN": -2, "FI": 1, "Noi Moderati": 0, "M5S": -1, "AVS": 0, "PD": 2, "Azione": 2, "IV": 2, "+Europa": 2, "PLD": 2 },
+  palestina:     { "PD": 2, "M5S": 2, "AVS": 2, "+Europa": 2, "IV": 1, "Azione": 0, "FdI": -1, "Lega": -2, "FI": -1, "Noi Moderati": -1, "FN": -1, "PLD": -1 },
+  fineVita:      { "FdI": 1, "Lega": 1, "FN": 2, "Noi Moderati": 1, "FI": 0, "PD": -2, "M5S": -1, "AVS": -2, "+Europa": -2, "IV": -1, "Azione": -1, "PLD": -1 },
+  immigrazione:  { "FdI": 1, "Lega": 2, "FN": 2, "FI": 0, "Noi Moderati": 0, "M5S": 0, "PD": -2, "AVS": -2, "+Europa": -2, "IV": -1, "Azione": -1, "PLD": -1 },
+  mercosur:      { "FdI": 0, "Lega": 1, "FN": 2, "M5S": 1, "AVS": 1, "PD": 0, "FI": -1, "Noi Moderati": 0, "Azione": -1, "IV": -1, "+Europa": -2, "PLD": -2 },
+};
+
+function voterAnswer(p, q) {
+  if (p.name === "ORA!") return 2 * q.ora;
+  const o = VOTER_OVERRIDES[q.id];
+  if (o && p.short in o) return o[p.short];
+  const v = p[q.axis] * q.dir;
+  return Math.abs(v) >= 7 ? 2 * Math.sign(v) : Math.abs(v) >= 2.5 ? Math.sign(v) : 0;
+}
 
 const ANSWERS = [
   { label: "Molto d'accordo", v: 2 },
@@ -459,6 +509,26 @@ function drawAxis(key, me) {
   $(`axis-${key}`).innerHTML = g;
 }
 
+function answerLabel(v) {
+  return ANSWERS.find(a => a.v === v).label;
+}
+
+function renderVoter() {
+  const p = PARTIES.find(p => p.name === $("voterParty").value);
+  let same = 0;
+  $("voterList").innerHTML = QUESTIONS.map((q, i) => {
+    const mine = answers[i] ?? 0, theirs = voterAnswer(p, q);
+    const ok = Math.sign(mine) === Math.sign(theirs);
+    if (ok) same++;
+    return `<li><p class="q">${q.text}</p><div class="cmp">
+      <span>Tu: <b>${answerLabel(mine)}</b></span>
+      <span>Elettore tipo: <b>${answerLabel(theirs)}</b></span>
+      <span class="tag ${ok ? "same" : "diff"}">${ok ? "✓ concordi" : "✗ discordi"}</span></div></li>`;
+  }).join("");
+  $("voterSummary").innerHTML =
+    `Su <b>${same} domande su ${QUESTIONS.length}</b> la pensi come l'elettore tipo di ${p.name}.`;
+}
+
 function showResult() {
   const me = computePosition();
   view.me = me;
@@ -481,6 +551,9 @@ function showResult() {
   $("summary").textContent =
     `Preferisci ${ex} e hai un orientamento ${ey}. ${ez} Il partito più vicino a te è ${ranked[0].name}.`;
   $("share").dataset.party = ranked[0].name;
+  $("voterParty").innerHTML = PARTIES.map(p => `<option>${p.name}</option>`).join("");
+  $("voterParty").value = ranked[0].name;
+  renderVoter();
   $("bar").style.width = "100%";
   show("result");
 }
@@ -497,6 +570,7 @@ function shuffleQuestions() {
 }
 
 $("start").onclick = () => { shuffleQuestions(); current = 0; answers.fill(null); renderQuestion(); show("quiz"); };
+$("voterParty").onchange = renderVoter;
 $("back").onclick = () => { if (current > 0) { current--; renderQuestion(); } };
 $("restart").onclick = () => { answers.fill(null); show("intro"); };
 $("share").onclick = async () => {
