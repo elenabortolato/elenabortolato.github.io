@@ -247,6 +247,9 @@ const QUESTIONS = [
   { id: "congedi", topic: "Famiglie", axis: "x", dir: -1, ora: 2,
     text: "Padri e madri dovrebbero avere lo stesso congedo obbligatorio e retribuito, di 5 mesi ciascuno, anche in caso di adozione o affido.",
     context: "Oggi il congedo obbligatorio è di 5 mesi per le madri e di soli 10 giorni lavorativi per i padri, anche in caso di adozione o affido." },
+  { id: "comuni", topic: "Enti locali", axis: "x", dir: 1, ora: 2,
+    text: "Una quota maggiore delle tasse dovrebbe andare direttamente ai Comuni, e una minore allo Stato centrale.",
+    context: "La gran parte delle tasse pagate dai cittadini va allo Stato centrale, mentre i Comuni gestiscono servizi come asili, trasporto locale e assistenza sociale." },
   { id: "salvataggi", topic: "Imprese", axis: "x", dir: -1, ora: -1,
     text: "Lo Stato fa bene a usare soldi pubblici per salvare grandi aziende in crisi, come l'ex Ilva.",
     context: "Negli anni sono stati spesi miliardi per casi come Alitalia ed ex Ilva." },
@@ -310,6 +313,7 @@ const QUESTIONS = [
 // Di default deriva dalla posizione del partito sull'asse della domanda; qui sotto
 // le eccezioni in cui l'asse da solo darebbe una risposta lontana dalla posizione nota.
 const VOTER_OVERRIDES = {
+  comuni:        { "Lega": 2, "FN": 0, "FdI": -1, "FI": 1, "Noi Moderati": 1, "PD": 1, "M5S": 0, "AVS": 0, "Azione": 0, "IV": 0, "+Europa": 1, "PLD": 1 },
   tasse:         { "Lega": 2, "FI": 1, "FdI": 1, "FN": 1, "Noi Moderati": 1, "PD": -2, "AVS": -2, "M5S": -1, "+Europa": -1, "Azione": -1, "IV": -1, "PLD": 0 },
   superbonus:    { "M5S": 2, "AVS": 1, "PD": 0, "FdI": -2, "Lega": -1, "FI": 0, "Noi Moderati": -1, "FN": -1, "Azione": -2, "IV": -1, "+Europa": -2, "PLD": -2 },
   m5s:           { "M5S": -2, "AVS": 0, "PD": 0, "FdI": 2, "Lega": 1, "FI": 2, "Noi Moderati": 2, "FN": 1, "Azione": 2, "IV": 2, "+Europa": 2, "PLD": 2 },
