@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Bussola Politica Lampo</title>
-  <meta name="description" content="Versione lampo della Bussola Politica Italiana: 8 domande, sì o no, sopra la fotocamera frontale.">
+  <meta name="description" content="Versione lampo della Bussola Politica Italiana: 12 domande, sì o no, sopra la fotocamera frontale.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
@@ -53,7 +53,7 @@
 
     .top { margin-top: 9%; text-align: center; }
     .progress { display: flex; gap: 5px; justify-content: center; margin-bottom: 14px; }
-    .progress span { width: 22px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.3); }
+    .progress span { width: 18px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.3); }
     .progress span.done { background: var(--accent); }
     .bubble {
       background: var(--panel);
@@ -118,7 +118,7 @@
 
   <div class="layer" id="intro">
     <div class="center">
-      <div class="title">Che partito sei?<br>8 domande, sì o no.</div>
+      <div class="title">Che partito sei?<br>12 domande, sì o no.</div>
       <div class="sub">Rispondi d'istinto. Attiva la fotocamera per registrare la tua reazione.</div>
       <button class="start-btn" id="start">Inizia</button>
     </div>
@@ -171,13 +171,17 @@ const PARTIES = [
 // dir: +1 se rispondere "sì" sposta verso mercato / europeismo / discontinuità
 const QUESTIONS = [
   { topic: "Pensioni", axis: "x", dir: 1,  text: "Le pensioni vanno calcolate sui contributi versati?" },
-  { topic: "Superbonus", axis: "x", dir: -1, text: "Il Superbonus è stato un buon investimento?" },
+  { topic: "Superbonus", axis: "x", dir: 1,  text: "Il Superbonus è stato uno spreco di soldi pubblici?" },
   { topic: "Sanità", axis: "x", dir: -1, text: "Più soldi pubblici alla sanità?" },
+  { topic: "Imprese", axis: "x", dir: -1, text: "Lo Stato deve salvare le grandi aziende in crisi, come l'ex Ilva?" },
   { topic: "Europa", axis: "y", dir: 1,  text: "Ci vuole una difesa comune europea?" },
   { topic: "Ucraina", axis: "y", dir: -1, text: "Basta inviare armi all'Ucraina?" },
   { topic: "Immigrazione", axis: "y", dir: -1, text: "Ridurre anche l'immigrazione regolare?" },
+  { topic: "Palestina", axis: "y", dir: 1,  text: "L'Italia deve riconoscere lo Stato di Palestina?" },
   { topic: "Politica", axis: "z", dir: -1, text: "I partiti al governo da 20 anni sanno fare le riforme?" },
-  { topic: "Metodo", axis: "z", dir: 1,  text: "Abolire le misure che una valutazione indipendente boccia?" },
+  { topic: "Giustizia", axis: "z", dir: 1,  text: "Ogni processo deve avere una durata massima fissata per legge?" },
+  { topic: "Scuola", axis: "z", dir: 1,  text: "Stessa scuola per tutti fino a 16 anni?" },
+  { topic: "ISEE", axis: "z", dir: -1, text: "L'ISEE basta per decidere chi riceve aiuti pubblici?" },
 ];
 
 const AXES = [
