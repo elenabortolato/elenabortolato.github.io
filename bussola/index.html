@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bussola Politica Italiana</title>
+  <meta name="description" content="Un quiz in stile political compass sui temi delle riforme: scopri a quale partito italiano sei più vicino.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fbfaf7;
+      --surface: #ffffff;
+      --text: #1d1d1f;
+      --muted: #5f6368;
+      --line: #e6e3dc;
+      --accent: #c2410c;
+      --accent-soft: #fdeee5;
+      --grid: #ece9e2;
+      --q1: rgba(220, 38, 38, .06);
+      --q2: rgba(37, 99, 235, .06);
+      --q3: rgba(22, 163, 74, .06);
+      --q4: rgba(234, 179, 8, .08);
+      --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #151517;
+        --surface: #1e1e21;
+        --text: #ececec;
+        --muted: #a3a3a8;
+        --line: #2f2f34;
+        --accent: #fb923c;
+        --accent-soft: #2e2119;
+        --grid: #2a2a2f;
+        --q1: rgba(248, 113, 113, .08);
+        --q2: rgba(96, 165, 250, .08);
+        --q3: rgba(74, 222, 128, .07);
+        --q4: rgba(250, 204, 21, .07);
+        --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg: #151517;
+      --surface: #1e1e21;
+      --text: #ececec;
+      --muted: #a3a3a8;
+      --line: #2f2f34;
+      --accent: #fb923c;
+      --accent-soft: #2e2119;
+      --grid: #2a2a2f;
+      --q1: rgba(248, 113, 113, .08);
+      --q2: rgba(96, 165, 250, .08);
+      --q3: rgba(74, 222, 128, .07);
+      --q4: rgba(250, 204, 21, .07);
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      line-height: 1.55;
+    }
+    main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+    h1, h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; letter-spacing: -.01em; }
+    h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); margin: 0 0 8px; }
+    h2 { font-size: 1.4rem; margin: 0 0 12px; }
+    p.lead { color: var(--muted); font-size: 1.05rem; margin: 0 0 24px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .btn {
+      appearance: none; border: 0; cursor: pointer;
+      background: var(--accent); color: #fff;
+      font: 600 1rem Inter, sans-serif;
+      padding: 12px 22px; border-radius: 999px;
+    }
+    .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    .hidden { display: none !important; }
+
+    .progress { height: 6px; background: var(--grid); border-radius: 99px; overflow: hidden; margin-bottom: 16px; }
+    .progress > div { height: 100%; background: var(--accent); width: 0; transition: width .25s; }
+    .meta { display: flex; justify-content: space-between; color: var(--muted); font-size: .85rem; margin-bottom: 8px; }
+    .topic { text-transform: uppercase; letter-spacing: .08em; font-weight: 600; color: var(--accent); }
+    .question { font-family: Fraunces, Georgia, serif; font-size: clamp(1.2rem, 3.6vw, 1.5rem); margin: 4px 0 8px; }
+    .context { color: var(--muted); font-size: .92rem; margin: 0 0 20px; }
+    .answers { display: grid; gap: 8px; }
+    .answers button {
+      text-align: left; cursor: pointer;
+      background: var(--bg); color: var(--text);
+      border: 1px solid var(--line); border-radius: 12px;
+      padding: 12px 16px; font: 500 .98rem Inter, sans-serif;
+    }
+    .answers button:hover { border-color: var(--accent); }
+    .answers button.selected { background: var(--accent-soft); border-color: var(--accent); }
+    .nav { display: flex; justify-content: space-between; margin-top: 20px; gap: 8px; }
+
+    svg { width: 100%; height: auto; display: block; }
+    .compass-label { font: 600 11px Inter, sans-serif; fill: var(--muted); }
+    .party-label { font: 600 10.5px Inter, sans-serif; fill: var(--text); }
+    .you-label { font: 700 12px Inter, sans-serif; fill: var(--accent); }
+
+    .ranking { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+    .ranking li { display: grid; grid-template-columns: 1fr 52px; gap: 4px 12px; align-items: center; }
+    .ranking .bar { grid-column: 1 / -1; height: 6px; background: var(--grid); border-radius: 99px; overflow: hidden; }
+    .ranking .bar > div { height: 100%; border-radius: 99px; }
+    .ranking .pct { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: .9rem; }
+    .big { font-family: Fraunces, Georgia, serif; font-size: 2.4rem; font-weight: 600; color: var(--accent); line-height: 1; }
+    .grid2 { display: grid; gap: 16px; margin-top: 16px; }
+    @media (min-width: 640px) { .grid2 { grid-template-columns: 1fr 1fr; } }
+    .note { color: var(--muted); font-size: .82rem; margin-top: 24px; }
+    .note a, .cta a { color: var(--accent); }
+    .cta { margin-top: 16px; padding: 16px 20px; border-radius: 12px; background: var(--accent-soft); }
+    .theses { padding-left: 18px; margin: 8px 0 0; }
+    .theses li { margin-bottom: 6px; font-size: .93rem; }
+  </style>
+</head>
+<body>
+<main>
+
+  <section id="intro">
+    <h1>Bussola Politica Italiana</h1>
+    <p class="lead">16 affermazioni sui temi che decideranno il futuro dell'Italia: pensioni, tasse, scuola, energia, Europa. Rispondi d'istinto e scopri dove ti collochi rispetto ai partiti italiani.</p>
+    <div class="card">
+      <p style="margin-top:0">Ogni risposta ti sposta su due assi:</p>
+      <ul>
+        <li><strong>Economia</strong> — dallo <em>Stato</em> che interviene e protegge al <em>mercato</em> e alla concorrenza.</li>
+        <li><strong>Europa e apertura</strong> — dal <em>sovranismo</em> all'<em>europeismo</em> e all'apertura internazionale.</li>
+      </ul>
+      <button class="btn" id="start">Inizia il test</button>
+    </div>
+  </section>
+
+  <section id="quiz" class="hidden">
+    <div class="progress"><div id="bar"></div></div>
+    <div class="card">
+      <div class="meta"><span class="topic" id="topic"></span><span id="count"></span></div>
+      <p class="question" id="question"></p>
+      <p class="context" id="context"></p>
+      <div class="answers" id="answers"></div>
+      <div class="nav">
+        <button class="btn ghost" id="back">← Indietro</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="result" class="hidden">
+    <h1>Il tuo risultato</h1>
+    <p class="lead" id="summary"></p>
+    <div class="card">
+      <svg id="compass" viewBox="0 0 440 440" role="img" aria-label="Bussola politica con la tua posizione e quella dei partiti"></svg>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h2>Partiti più vicini</h2>
+        <ol class="ranking" id="ranking"></ol>
+      </div>
+      <div class="card">
+        <h2>Tu e le tesi di ORA!</h2>
+        <div class="big" id="oraPct"></div>
+        <p style="color:var(--muted);margin:6px 0 0">delle tesi programmatiche di ORA! presenti nel test trova il tuo accordo.</p>
+        <ul class="theses" id="theses"></ul>
+      </div>
+    </div>
+    <div class="cta">
+      Vuoi approfondire? Leggi le <a href="https://ora-italia.it/proposta/" target="_blank" rel="noopener">proposte di ORA!</a>
+      e le loro <a href="https://ora-italia.it/le-nostre-posizioni-politiche/" target="_blank" rel="noopener">posizioni politiche</a>.
+    </div>
+    <div class="nav">
+      <button class="btn ghost" id="restart">Rifai il test</button>
+      <button class="btn" id="share">Condividi</button>
+    </div>
+    <p class="note">
+      Le posizioni dei partiti sono stime indicative basate su programmi e dichiarazioni pubbliche, non posizioni ufficiali.
+      Le domande sono costruite attorno ai temi delle Tesi Programmatiche di ORA!: il test non è uno strumento neutrale
+      di orientamento al voto.
+    </p>
+  </section>
+
+</main>
+
+<script>
+// x: -10 = Stato / intervento pubblico, +10 = mercato / concorrenza
+// y: -10 = sovranismo / chiusura, +10 = europeismo / apertura
+const PARTIES = [
+  { name: "ORA!",                      x:  7.0, y:  8.0, color: "#ea580c", short: "ORA!", anchor: "start", dx: 10, dy: -7 },
+  { name: "Partito Liberaldemocratico", x:  6.0, y:  7.0, color: "#0ea5e9", short: "PLD", anchor: "start", dx: 9, dy: 4 },
+  { name: "+Europa",                   x:  4.0, y:  9.0, color: "#c026d3", short: "+Europa", anchor: "start", dx: 9, dy: 4 },
+  { name: "Azione",                    x:  3.5, y:  6.5, color: "#1d4ed8", short: "Azione", anchor: "start", dx: 9, dy: 12 },
+  { name: "Italia Viva",               x:  2.5, y:  7.0, color: "#db2777", short: "IV", anchor: "end", dx: -9, dy: 4 },
+  { name: "Forza Italia",              x:  4.0, y:  4.5, color: "#2563eb", short: "FI", anchor: "start", dx: 9, dy: 4 },
+  { name: "Noi Moderati",              x:  2.0, y:  2.5, color: "#0891b2", short: "Noi Moderati", anchor: "start", dx: 9, dy: 4 },
+  { name: "Partito Democratico",       x: -3.0, y:  6.0, color: "#dc2626", short: "PD", anchor: "end", dx: -9, dy: 4 },
+  { name: "Fratelli d'Italia",         x:  0.5, y: -3.5, color: "#1e3a8a", short: "FdI", anchor: "start", dx: 9, dy: 4 },
+  { name: "Lega",                      x:  0.5, y: -7.0, color: "#16a34a", short: "Lega", anchor: "start", dx: 9, dy: 4 },
+  { name: "Movimento 5 Stelle",        x: -5.0, y: -3.0, color: "#ca8a04", short: "M5S", anchor: "start", dx: 9, dy: 4 },
+  { name: "Alleanza Verdi e Sinistra", x: -7.5, y:  2.5, color: "#65a30d", short: "AVS", anchor: "start", dx: 9, dy: 4 },
+];
+
+// axis: "x" | "y"; dir: +1 se essere d'accordo sposta verso mercato / europeismo.
+// ora: +1 se la tesi corrisponde alla posizione di ORA!, -1 se ORA! è contraria.
+const QUESTIONS = [
+  { topic: "Pensioni", axis: "x", dir: 1, ora: 1,
+    text: "Tutte le pensioni dovrebbero essere calcolate con il metodo contributivo: ricevi in base a quanto hai versato.",
+    context: "L'Italia spende per le pensioni più di qualsiasi altro grande paese europeo in rapporto al PIL.",
+    thesis: "Sistema pensionistico unico e contributivo, sul modello svedese" },
+  { topic: "Pensioni", axis: "x", dir: -1, ora: -1,
+    text: "Forme di pensione anticipata come Quota 100/103 sono un diritto da difendere, anche se costano.",
+    context: "Le uscite anticipate pesano sui conti pubblici e quindi sulle generazioni più giovani." },
+  { topic: "Tasse", axis: "x", dir: 1, ora: 1,
+    text: "Le tasse sul lavoro vanno tagliate in modo deciso, finanziando il taglio con la riduzione della spesa pubblica improduttiva.",
+    context: "Il cuneo fiscale italiano è tra i più alti dell'OCSE.",
+    thesis: "Spostare il carico fiscale via dal lavoro e ridurre il cuneo" },
+  { topic: "Spesa pubblica", axis: "x", dir: -1, ora: -1,
+    text: "Il Superbonus 110% è stato un buon investimento di denaro pubblico.",
+    context: "La misura è costata oltre 100 miliardi di euro allo Stato." },
+  { topic: "Imprese", axis: "x", dir: 1, ora: 1,
+    text: "Lo Stato non dovrebbe usare soldi pubblici per salvare aziende in crisi che non stanno in piedi da sole.",
+    context: "Negli anni sono stati spesi miliardi per casi come Alitalia ed ex Ilva." },
+  { topic: "Concorrenza", axis: "x", dir: 1, ora: 1,
+    text: "Concessioni balneari, licenze dei taxi e servizi pubblici locali andrebbero messi a gara.",
+    context: "L'UE chiede da anni all'Italia di aprire alla concorrenza questi settori.",
+    thesis: "Più concorrenza e meno rendite di posizione" },
+  { topic: "Pubblica amministrazione", axis: "x", dir: 1, ora: 1,
+    text: "I dipendenti pubblici dovrebbero essere valutati sui risultati, con premi per chi rende e conseguenze per chi non lo fa.",
+    context: "Oggi la quasi totalità dei dipendenti pubblici ottiene la valutazione massima.",
+    thesis: "Riforma della PA basata su merito e responsabilità" },
+  { topic: "Lavoro", axis: "x", dir: -1, ora: -1,
+    text: "Un salario minimo fissato per legge è lo strumento migliore contro il lavoro povero.",
+    context: "Salari bassi e produttività ferma da 25 anni sono due facce dello stesso problema." },
+  { topic: "Università", axis: "x", dir: 1, ora: 1,
+    text: "Le università pubbliche dovrebbero avere più autonomia ed essere finanziate in base alla qualità della ricerca e della didattica.",
+    context: "Nessun ateneo italiano è tra i primi 100 nelle principali classifiche mondiali.",
+    thesis: "Università autonome e valutate, sul modello californiano" },
+  { topic: "Energia", axis: "x", dir: 1, ora: 1,
+    text: "L'Italia dovrebbe tornare a produrre energia nucleare.",
+    context: "L'Italia importa gran parte dell'energia che consuma, anche dalla Francia, che usa il nucleare.",
+    thesis: "Reintrodurre il nucleare accanto alle rinnovabili" },
+  { topic: "Europa", axis: "y", dir: 1, ora: 1,
+    text: "Serve un'Europa più integrata, con una difesa comune e un bilancio comune.",
+    context: "Da soli, i paesi europei pesano poco di fronte a Stati Uniti e Cina.",
+    thesis: "Un'Europa più integrata e federale" },
+  { topic: "Europa", axis: "y", dir: 1, ora: 1,
+    text: "Il diritto di veto dei singoli Stati nelle decisioni UE andrebbe abolito.",
+    context: "Oggi un solo governo può bloccare sanzioni, aiuti o riforme volute da tutti gli altri." },
+  { topic: "Europa", axis: "y", dir: -1, ora: -1,
+    text: "Quando le norme nazionali e quelle europee sono in conflitto, dovrebbero prevalere quelle italiane.",
+    context: "" },
+  { topic: "Politica estera", axis: "y", dir: 1, ora: 1,
+    text: "L'Italia deve continuare a sostenere l'Ucraina, anche militarmente.",
+    context: "",
+    thesis: "Collocazione atlantica ed europea senza ambiguità" },
+  { topic: "Demografia", axis: "y", dir: 1, ora: 1,
+    text: "Un'immigrazione regolare e qualificata è necessaria per compensare il calo demografico.",
+    context: "Ogni anno la popolazione in età lavorativa si riduce di centinaia di migliaia di persone." },
+  { topic: "Commercio", axis: "y", dir: 1, ora: 1,
+    text: "Gli accordi di libero scambio, come quello UE-Mercosur, avvantaggiano le imprese italiane.",
+    context: "L'Italia è la seconda manifattura d'Europa e vive di esportazioni." },
+];
+
+const ANSWERS = [
+  { label: "Molto d'accordo", v: 2 },
+  { label: "D'accordo", v: 1 },
+  { label: "Neutrale / Non so", v: 0 },
+  { label: "In disaccordo", v: -1 },
+  { label: "Molto in disaccordo", v: -2 },
+];
+
+const $ = id => document.getElementById(id);
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null);
+
+function show(id) {
+  ["intro", "quiz", "result"].forEach(s => $(s).classList.toggle("hidden", s !== id));
+  window.scrollTo(0, 0);
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[current];
+  $("topic").textContent = q.topic;
+  $("count").textContent = `${current + 1} / ${QUESTIONS.length}`;
+  $("question").textContent = q.text;
+  $("context").textContent = q.context;
+  $("context").classList.toggle("hidden", !q.context);
+  $("bar").style.width = `${(current / QUESTIONS.length) * 100}%`;
+  $("back").disabled = current === 0;
+  const box = $("answers");
+  box.innerHTML = "";
+  ANSWERS.forEach(a => {
+    const b = document.createElement("button");
+    b.textContent = a.label;
+    if (answers[current] === a.v) b.classList.add("selected");
+    b.onclick = () => {
+      answers[current] = a.v;
+      if (current < QUESTIONS.length - 1) { current++; renderQuestion(); }
+      else showResult();
+    };
+    box.appendChild(b);
+  });
+}
+
+function computePosition() {
+  const sum = { x: 0, y: 0 }, max = { x: 0, y: 0 };
+  QUESTIONS.forEach((q, i) => {
+    sum[q.axis] += (answers[i] ?? 0) * q.dir;
+    max[q.axis] += 2;
+  });
+  // Le risposte moderate tendono a schiacciare il punteggio al centro:
+  // la radice quadrata lo riporta sulla scala delle posizioni dei partiti.
+  const stretch = r => Math.sign(r) * Math.sqrt(Math.abs(r)) * 10;
+  return { x: stretch(sum.x / max.x), y: stretch(sum.y / max.y) };
+}
+
+function oraAgreement() {
+  let agree = 0;
+  QUESTIONS.forEach((q, i) => { if ((answers[i] ?? 0) * q.ora > 0) agree++; });
+  return Math.round((agree / QUESTIONS.length) * 100);
+}
+
+function affinity(p, me) {
+  const d = Math.hypot(p.x - me.x, p.y - me.y);
+  return Math.max(0, Math.round(100 * (1 - d / Math.hypot(20, 20))));
+}
+
+function drawCompass(me) {
+  const S = 440, pad = 36, inner = S - 2 * pad;
+  const px = x => pad + ((x + 10) / 20) * inner;
+  const py = y => pad + ((10 - y) / 20) * inner;
+  const half = inner / 2;
+  let g = "";
+  g += `<rect x="${pad}" y="${pad}" width="${half}" height="${half}" fill="var(--q2)"/>`;
+  g += `<rect x="${pad + half}" y="${pad}" width="${half}" height="${half}" fill="var(--q3)"/>`;
+  g += `<rect x="${pad}" y="${pad + half}" width="${half}" height="${half}" fill="var(--q1)"/>`;
+  g += `<rect x="${pad + half}" y="${pad + half}" width="${half}" height="${half}" fill="var(--q4)"/>`;
+  for (let i = -10; i <= 10; i += 2) {
+    g += `<line x1="${px(i)}" y1="${pad}" x2="${px(i)}" y2="${S - pad}" stroke="var(--grid)" stroke-width="1"/>`;
+    g += `<line x1="${pad}" y1="${py(i)}" x2="${S - pad}" y2="${py(i)}" stroke="var(--grid)" stroke-width="1"/>`;
+  }
+  g += `<line x1="${px(0)}" y1="${pad}" x2="${px(0)}" y2="${S - pad}" stroke="var(--muted)" stroke-width="1.2"/>`;
+  g += `<line x1="${pad}" y1="${py(0)}" x2="${S - pad}" y2="${py(0)}" stroke="var(--muted)" stroke-width="1.2"/>`;
+  g += `<text class="compass-label" x="${S / 2}" y="${pad - 12}" text-anchor="middle">EUROPEISMO · APERTURA</text>`;
+  g += `<text class="compass-label" x="${S / 2}" y="${S - pad + 22}" text-anchor="middle">SOVRANISMO · CHIUSURA</text>`;
+  g += `<text class="compass-label" x="${pad - 12}" y="${S / 2}" text-anchor="middle" transform="rotate(-90 ${pad - 12} ${S / 2})">STATO</text>`;
+  g += `<text class="compass-label" x="${S - pad + 16}" y="${S / 2}" text-anchor="middle" transform="rotate(90 ${S - pad + 16} ${S / 2})">MERCATO</text>`;
+  PARTIES.forEach(p => {
+    const r = p.name === "ORA!" ? 7 : 5;
+    g += `<circle cx="${px(p.x)}" cy="${py(p.y)}" r="${r}" fill="${p.color}" stroke="var(--surface)" stroke-width="2"/>`;
+    g += `<text class="party-label" x="${px(p.x) + p.dx}" y="${py(p.y) + p.dy}" text-anchor="${p.anchor}">${p.short}</text>`;
+  });
+  g += `<circle cx="${px(me.x)}" cy="${py(me.y)}" r="10" fill="none" stroke="var(--accent)" stroke-width="3"/>`;
+  g += `<circle cx="${px(me.x)}" cy="${py(me.y)}" r="4" fill="var(--accent)"/>`;
+  g += `<text class="you-label" x="${px(me.x)}" y="${py(me.y) - 15}" text-anchor="middle">TU</text>`;
+  $("compass").innerHTML = g;
+}
+
+function showResult() {
+  const me = computePosition();
+  drawCompass(me);
+
+  const ranked = PARTIES.map(p => ({ ...p, a: affinity(p, me) })).sort((a, b) => b.a - a.a);
+  $("ranking").innerHTML = ranked.slice(0, 6).map(p =>
+    `<li><span>${p.name}</span><span class="pct">${p.a}%</span>
+     <div class="bar"><div style="width:${p.a}%;background:${p.color}"></div></div></li>`).join("");
+
+  const pct = oraAgreement();
+  $("oraPct").textContent = `${pct}%`;
+  $("theses").innerHTML = QUESTIONS
+    .map((q, i) => ({ q, v: (answers[i] ?? 0) * q.ora }))
+    .filter(o => o.q.thesis && o.v > 0)
+    .map(o => `<li>${o.q.thesis}</li>`).join("") || "<li>Nessuna tesi condivisa… per ora!</li>";
+
+  const ex = me.x >= 0 ? "il mercato e la concorrenza" : "l'intervento dello Stato";
+  const ey = me.y >= 0 ? "europeista e aperto" : "sovranista";
+  $("summary").textContent =
+    `Preferisci ${ex} e hai un orientamento ${ey}. Il partito più vicino a te è ${ranked[0].name}.`;
+  $("bar").style.width = "100%";
+  show("result");
+}
+
+$("start").onclick = () => { current = 0; answers.fill(null); renderQuestion(); show("quiz"); };
+$("back").onclick = () => { if (current > 0) { current--; renderQuestion(); } };
+$("restart").onclick = () => { answers.fill(null); show("intro"); };
+$("share").onclick = async () => {
+  const text = `Ho fatto la Bussola Politica Italiana: sono d'accordo con il ${$("oraPct").textContent} delle tesi di ORA!`;
+  try {
+    if (navigator.share) await navigator.share({ title: document.title, text, url: location.href });
+    else { await navigator.clipboard.writeText(`${text} ${location.href}`); $("share").textContent = "Link copiato!"; }
+  } catch (e) { /* condivisione annullata */ }
+};
+</script>
+</body>
+</html>
