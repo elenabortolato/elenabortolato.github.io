@@ -18,10 +18,6 @@
       --accent: #c2410c;
       --accent-soft: #fdeee5;
       --grid: #ece9e2;
-      --q1: rgba(220, 38, 38, .06);
-      --q2: rgba(37, 99, 235, .06);
-      --q3: rgba(22, 163, 74, .06);
-      --q4: rgba(234, 179, 8, .08);
       --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
     }
     @media (prefers-color-scheme: dark) {
@@ -34,10 +30,6 @@
         --accent: #fb923c;
         --accent-soft: #2e2119;
         --grid: #2a2a2f;
-        --q1: rgba(248, 113, 113, .08);
-        --q2: rgba(96, 165, 250, .08);
-        --q3: rgba(74, 222, 128, .07);
-        --q4: rgba(250, 204, 21, .07);
         --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
       }
     }
@@ -50,10 +42,6 @@
       --accent: #fb923c;
       --accent-soft: #2e2119;
       --grid: #2a2a2f;
-      --q1: rgba(248, 113, 113, .08);
-      --q2: rgba(96, 165, 250, .08);
-      --q3: rgba(74, 222, 128, .07);
-      --q4: rgba(250, 204, 21, .07);
       --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
     }
 
@@ -108,6 +96,10 @@
     .compass-label { font: 600 11px Inter, sans-serif; fill: var(--muted); }
     .party-label { font: 600 10.5px Inter, sans-serif; fill: var(--text); }
     .you-label { font: 700 12px Inter, sans-serif; fill: var(--accent); }
+    #cube { touch-action: pan-y; cursor: grab; user-select: none; overflow: visible; }
+    #cube:active { cursor: grabbing; }
+    .hint { color: var(--muted); font-size: .85rem; margin: -6px 0 8px; }
+    h3 { font: 600 .8rem Inter, sans-serif; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 16px 0 0; }
 
     .ranking { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
     .ranking li { display: grid; grid-template-columns: 1fr 52px; gap: 4px 12px; align-items: center; }
@@ -150,11 +142,18 @@
     <h1>Il tuo risultato</h1>
     <p class="lead" id="summary"></p>
     <div class="card">
-      <svg id="compass" viewBox="0 0 440 440" role="img" aria-label="Bussola politica con la tua posizione e quella dei partiti"></svg>
+      <h2>La tua posizione in 3D</h2>
+      <p class="hint">Trascina il cubo per ruotarlo.</p>
+      <svg id="cube" viewBox="0 0 440 440" role="img" aria-label="Grafico 3D con la tua posizione e quella dei partiti sui tre assi"></svg>
     </div>
     <div class="card" style="margin-top:16px">
-      <h2>Terzo asse: il metodo</h2>
-      <svg id="zaxis" viewBox="0 0 440 180" role="img" aria-label="Asse vecchia politica – discontinuità con la tua posizione e quella dei partiti"></svg>
+      <h2>Asse per asse</h2>
+      <h3>Economia</h3>
+      <svg id="axis-x" viewBox="0 0 440 150" role="img" aria-label="Asse Stato – mercato"></svg>
+      <h3>Europa e apertura</h3>
+      <svg id="axis-y" viewBox="0 0 440 150" role="img" aria-label="Asse sovranismo – europeismo"></svg>
+      <h3>Metodo</h3>
+      <svg id="axis-z" viewBox="0 0 440 150" role="img" aria-label="Asse vecchia politica – discontinuità"></svg>
     </div>
     <div class="grid2">
       <div class="card">
@@ -190,19 +189,19 @@
 // y: -10 = sovranismo / chiusura, +10 = europeismo / apertura
 // z: -10 = vecchia politica, +10 = discontinuità e competenza
 const PARTIES = [
-  { name: "ORA!",                      x:  4.0, y:  8.0, z:  8.0, color: "#ea580c", short: "ORA!", anchor: "end", dx: -10, dy: 4 },
-  { name: "Partito Liberaldemocratico", x:  6.0, y:  7.0, z:  1.0, color: "#0ea5e9", short: "PLD", anchor: "start", dx: 9, dy: 4 },
-  { name: "+Europa",                   x:  4.0, y:  9.0, z: -4.0, color: "#c026d3", short: "+Europa", anchor: "start", dx: 9, dy: 4 },
-  { name: "Azione",                    x:  3.5, y:  6.5, z: -3.0, color: "#1d4ed8", short: "Azione", anchor: "start", dx: 9, dy: 12 },
-  { name: "Italia Viva",               x:  2.5, y:  7.0, z: -5.0, color: "#db2777", short: "IV", anchor: "end", dx: -9, dy: 4 },
-  { name: "Forza Italia",              x:  4.0, y:  4.5, z: -7.0, color: "#2563eb", short: "FI", anchor: "start", dx: 9, dy: 4 },
-  { name: "Noi Moderati",              x:  2.0, y:  2.5, z: -7.0, color: "#0891b2", short: "Noi Moderati", zshort: "NM", anchor: "start", dx: 9, dy: 4 },
-  { name: "Partito Democratico",       x: -3.0, y:  6.0, z: -6.0, color: "#dc2626", short: "PD", anchor: "end", dx: -9, dy: 4 },
-  { name: "Fratelli d'Italia",         x:  0.5, y: -3.5, z: -4.0, color: "#1e3a8a", short: "FdI", anchor: "start", dx: 9, dy: 4 },
-  { name: "Lega",                      x:  0.5, y: -7.0, z: -6.0, color: "#16a34a", short: "Lega", anchor: "start", dx: 9, dy: 4 },
-  { name: "Futuro Nazionale",          x:  1.0, y: -9.0, z:  2.0, color: "#78350f", short: "FN", anchor: "start", dx: 9, dy: 4 },
-  { name: "Movimento 5 Stelle",        x: -5.0, y: -3.0, z: -3.0, color: "#ca8a04", short: "M5S", anchor: "start", dx: 9, dy: 4 },
-  { name: "Alleanza Verdi e Sinistra", x: -7.5, y:  2.5, z: -4.0, color: "#65a30d", short: "AVS", anchor: "start", dx: 9, dy: 4 },
+  { name: "ORA!",                      x:  4.0, y:  8.0, z:  8.0, color: "#ea580c", short: "ORA!" },
+  { name: "Partito Liberaldemocratico", x:  6.0, y:  7.0, z:  1.0, color: "#0ea5e9", short: "PLD" },
+  { name: "+Europa",                   x:  4.0, y:  9.0, z: -4.0, color: "#c026d3", short: "+Europa" },
+  { name: "Azione",                    x:  3.5, y:  6.5, z: -3.0, color: "#1d4ed8", short: "Azione" },
+  { name: "Italia Viva",               x:  2.5, y:  7.0, z: -5.0, color: "#db2777", short: "IV" },
+  { name: "Forza Italia",              x:  4.0, y:  4.5, z: -7.0, color: "#2563eb", short: "FI" },
+  { name: "Noi Moderati",              x:  2.0, y:  2.5, z: -7.0, color: "#0891b2", short: "Noi Moderati", abbr: "NM" },
+  { name: "Partito Democratico",       x: -3.0, y:  6.0, z: -6.0, color: "#dc2626", short: "PD" },
+  { name: "Fratelli d'Italia",         x:  0.5, y: -3.5, z: -4.0, color: "#1e3a8a", short: "FdI" },
+  { name: "Lega",                      x:  0.5, y: -7.0, z: -6.0, color: "#16a34a", short: "Lega" },
+  { name: "Futuro Nazionale",          x:  1.0, y: -9.0, z:  2.0, color: "#78350f", short: "FN" },
+  { name: "Movimento 5 Stelle",        x: -5.0, y: -3.0, z: -3.0, color: "#ca8a04", short: "M5S" },
+  { name: "Alleanza Verdi e Sinistra", x: -7.5, y:  2.5, z: -4.0, color: "#65a30d", short: "AVS" },
 ];
 
 // axis: "x" | "y" | "z"; dir: +1 se essere d'accordo sposta verso mercato / europeismo / discontinuità.
@@ -395,65 +394,123 @@ function affinity(p, me) {
   return Math.max(0, Math.round(100 * (1 - d / Math.hypot(20, 20, 20))));
 }
 
-function drawCompass(me) {
-  const S = 440, pad = 36, inner = S - 2 * pad;
-  const px = x => pad + ((x + 10) / 20) * inner;
-  const py = y => pad + ((10 - y) / 20) * inner;
-  const half = inner / 2;
-  let g = "";
-  g += `<rect x="${pad}" y="${pad}" width="${half}" height="${half}" fill="var(--q2)"/>`;
-  g += `<rect x="${pad + half}" y="${pad}" width="${half}" height="${half}" fill="var(--q3)"/>`;
-  g += `<rect x="${pad}" y="${pad + half}" width="${half}" height="${half}" fill="var(--q1)"/>`;
-  g += `<rect x="${pad + half}" y="${pad + half}" width="${half}" height="${half}" fill="var(--q4)"/>`;
-  for (let i = -10; i <= 10; i += 2) {
-    g += `<line x1="${px(i)}" y1="${pad}" x2="${px(i)}" y2="${S - pad}" stroke="var(--grid)" stroke-width="1"/>`;
-    g += `<line x1="${pad}" y1="${py(i)}" x2="${S - pad}" y2="${py(i)}" stroke="var(--grid)" stroke-width="1"/>`;
-  }
-  g += `<line x1="${px(0)}" y1="${pad}" x2="${px(0)}" y2="${S - pad}" stroke="var(--muted)" stroke-width="1.2"/>`;
-  g += `<line x1="${pad}" y1="${py(0)}" x2="${S - pad}" y2="${py(0)}" stroke="var(--muted)" stroke-width="1.2"/>`;
-  g += `<text class="compass-label" x="${S / 2}" y="${pad - 12}" text-anchor="middle">EUROPEISMO · APERTURA</text>`;
-  g += `<text class="compass-label" x="${S / 2}" y="${S - pad + 22}" text-anchor="middle">SOVRANISMO · CHIUSURA</text>`;
-  g += `<text class="compass-label" x="${pad - 12}" y="${S / 2}" text-anchor="middle" transform="rotate(-90 ${pad - 12} ${S / 2})">STATO</text>`;
-  g += `<text class="compass-label" x="${S - pad + 16}" y="${S / 2}" text-anchor="middle" transform="rotate(90 ${S - pad + 16} ${S / 2})">MERCATO</text>`;
-  PARTIES.forEach(p => {
-    const r = p.name === "ORA!" ? 7 : 5;
-    g += `<circle cx="${px(p.x)}" cy="${py(p.y)}" r="${r}" fill="${p.color}" stroke="var(--surface)" stroke-width="2"/>`;
-    g += `<text class="party-label" x="${px(p.x) + p.dx}" y="${py(p.y) + p.dy}" text-anchor="${p.anchor}">${p.short}</text>`;
-  });
-  g += `<circle cx="${px(me.x)}" cy="${py(me.y)}" r="10" fill="none" stroke="var(--accent)" stroke-width="3"/>`;
-  g += `<circle cx="${px(me.x)}" cy="${py(me.y)}" r="4" fill="var(--accent)"/>`;
-  g += `<text class="you-label" x="${px(me.x)}" y="${py(me.y) - 15}" text-anchor="middle">TU</text>`;
-  $("compass").innerHTML = g;
+const AXES = {
+  x: { neg: "STATO", pos: "MERCATO", color: "#2563eb" },
+  y: { neg: "SOVRANISMO", pos: "EUROPEISMO", color: "#16a34a" },
+  z: { neg: "VECCHIA POLITICA", pos: "DISCONTINUITÀ", color: "#c026d3" },
+};
+
+const view = { yaw: 0.9, pitch: 0.45, auto: true, me: null };
+
+// Proiezione prospettica: x orizzontale, y verticale, z profondità
+function project(x, y, z) {
+  const cy = Math.cos(view.yaw), sy = Math.sin(view.yaw);
+  const cp = Math.cos(view.pitch), sp = Math.sin(view.pitch);
+  const x1 = x * cy + z * sy, z1 = -x * sy + z * cy;
+  const y2 = y * cp - z1 * sp, z2 = y * sp + z1 * cp;
+  const f = 60 / (60 - z2);
+  return { sx: 220 + x1 * 10.5 * f, sy: 220 - y2 * 10.5 * f, depth: z2, f };
 }
 
-function drawZAxis(me) {
-  const W = 440, pad = 24, line = 70;
-  const px = z => pad + ((z + 10) / 20) * (W - 2 * pad);
-  let g = `<defs><linearGradient id="zgrad" x1="0" x2="1">
+function drawCube() {
+  const me = view.me;
+  let g = "";
+  const corners = [];
+  for (const x of [-10, 10]) for (const y of [-10, 10]) for (const z of [-10, 10]) corners.push([x, y, z]);
+  corners.forEach((a, i) => corners.forEach((b, j) => {
+    const diff = a.filter((v, k) => v !== b[k]).length;
+    if (j > i && diff === 1) {
+      const p = project(...a), q = project(...b);
+      g += `<line x1="${p.sx}" y1="${p.sy}" x2="${q.sx}" y2="${q.sy}" stroke="var(--line)" stroke-width="1"/>`;
+    }
+  }));
+  // assi passanti per l'origine
+  ["x", "y", "z"].forEach(k => {
+    const v = t => ({ x: k === "x" ? t : 0, y: k === "y" ? t : 0, z: k === "z" ? t : 0 });
+    const a = v(-10), b = v(10);
+    const p = project(a.x, a.y, a.z), q = project(b.x, b.y, b.z);
+    g += `<line x1="${p.sx}" y1="${p.sy}" x2="${q.sx}" y2="${q.sy}" stroke="${AXES[k].color}" stroke-width="1.6" opacity=".7"/>`;
+    const ln = v(-12.5), lp = v(12.5);
+    const n = project(ln.x, ln.y, ln.z), m = project(lp.x, lp.y, lp.z);
+    g += `<text class="compass-label" x="${n.sx}" y="${n.sy + 4}" text-anchor="middle" style="fill:${AXES[k].color}">${AXES[k].neg}</text>`;
+    g += `<text class="compass-label" x="${m.sx}" y="${m.sy + 4}" text-anchor="middle" style="fill:${AXES[k].color}">${AXES[k].pos}</text>`;
+  });
+  // punti ordinati per profondità (i più lontani prima)
+  const pts = PARTIES.map(p => ({ ...p, me: false }));
+  if (me) pts.push({ ...me, name: "TU", short: "TU", color: "var(--accent)", me: true });
+  pts.map(p => ({ p, pr: project(p.x, p.y, p.z), floor: project(p.x, -10, p.z) }))
+    .sort((a, b) => a.pr.depth - b.pr.depth)
+    .forEach(({ p, pr, floor }) => {
+      g += `<line x1="${pr.sx}" y1="${pr.sy}" x2="${floor.sx}" y2="${floor.sy}" stroke="${p.color}" stroke-width="1" stroke-dasharray="2 3" opacity=".5"/>`;
+      g += `<ellipse cx="${floor.sx}" cy="${floor.sy}" rx="${3 * floor.f}" ry="${1.4 * floor.f}" fill="${p.color}" opacity=".3"/>`;
+      const r = (p.me ? 7 : p.name === "ORA!" ? 6.5 : 5) * pr.f;
+      if (p.me) {
+        g += `<circle cx="${pr.sx}" cy="${pr.sy}" r="${r + 3}" fill="none" stroke="var(--accent)" stroke-width="3"/>`;
+        g += `<circle cx="${pr.sx}" cy="${pr.sy}" r="${r - 2}" fill="var(--accent)"/>`;
+        g += `<text class="you-label" x="${pr.sx}" y="${pr.sy - r - 8}" text-anchor="middle">TU</text>`;
+      } else {
+        g += `<circle cx="${pr.sx}" cy="${pr.sy}" r="${r}" fill="${p.color}" stroke="var(--surface)" stroke-width="1.5"/>`;
+        g += `<text class="party-label" x="${pr.sx + r + 4}" y="${pr.sy + 4}">${p.abbr || p.short}</text>`;
+      }
+    });
+  $("cube").innerHTML = g;
+}
+
+function spin() {
+  if (view.auto && !$("result").classList.contains("hidden")) { view.yaw += 0.004; drawCube(); }
+  requestAnimationFrame(spin);
+}
+
+(() => {
+  const svg = $("cube");
+  let drag = null;
+  svg.addEventListener("pointerdown", e => {
+    view.auto = false;
+    drag = { x: e.clientX, y: e.clientY, yaw: view.yaw, pitch: view.pitch };
+    svg.setPointerCapture(e.pointerId);
+  });
+  svg.addEventListener("pointermove", e => {
+    if (!drag) return;
+    view.yaw = drag.yaw + (e.clientX - drag.x) * 0.01;
+    view.pitch = Math.max(-1.4, Math.min(1.4, drag.pitch + (e.clientY - drag.y) * 0.01));
+    drawCube();
+  });
+  ["pointerup", "pointercancel"].forEach(t => svg.addEventListener(t, () => { drag = null; }));
+})();
+
+// Un asse alla volta, su una retta con i partiti e la posizione dell'utente
+function drawAxis(key, me) {
+  const W = 440, pad = 24, line = 52;
+  const px = v => pad + ((v + 10) / 20) * (W - 2 * pad);
+  let g = `<defs><linearGradient id="grad-${key}" x1="0" x2="1">
     <stop offset="0" stop-color="var(--muted)" stop-opacity=".35"/>
-    <stop offset="1" stop-color="var(--accent)"/></linearGradient></defs>`;
-  g += `<rect x="${pad}" y="${line - 3}" width="${W - 2 * pad}" height="6" rx="3" fill="url(#zgrad)"/>`;
-  g += `<text class="compass-label" x="${pad}" y="20">← VECCHIA POLITICA</text>`;
-  g += `<text class="compass-label" x="${W - pad}" y="20" text-anchor="end">DISCONTINUITÀ · DATI →</text>`;
+    <stop offset="1" stop-color="${AXES[key].color}"/></linearGradient></defs>`;
+  g += `<rect x="${pad}" y="${line - 3}" width="${W - 2 * pad}" height="6" rx="3" fill="url(#grad-${key})"/>`;
+  g += `<text class="compass-label" x="${pad}" y="18">← ${AXES[key].neg}</text>`;
+  g += `<text class="compass-label" x="${W - pad}" y="18" text-anchor="end">${AXES[key].pos} →</text>`;
   // impila le etichette su più righe per evitare sovrapposizioni
   const rowEnds = [];
-  [...PARTIES].sort((a, b) => a.z - b.z).forEach(p => {
-    const x = px(p.z), label = p.zshort || p.short, w = label.length * 7;
+  [...PARTIES].sort((a, b) => a[key] - b[key]).forEach(p => {
+    const x = px(p[key]), label = p.abbr || p.short, w = label.length * 7;
     let row = rowEnds.findIndex(end => end < x - w / 2 - 4);
     if (row === -1) row = rowEnds.length;
     rowEnds[row] = x + w / 2;
     g += `<circle cx="${x}" cy="${line}" r="${p.name === "ORA!" ? 7 : 5}" fill="${p.color}" stroke="var(--surface)" stroke-width="2"/>`;
-    g += `<text class="party-label" x="${x}" y="${line + 22 + row * 14}" text-anchor="middle" fill="${p.color}">${label}</text>`;
+    g += `<text class="party-label" x="${x}" y="${line + 22 + row * 14}" text-anchor="middle">${label}</text>`;
   });
-  g += `<circle cx="${px(me.z)}" cy="${line}" r="10" fill="none" stroke="var(--accent)" stroke-width="3"/>`;
-  g += `<text class="you-label" x="${px(me.z)}" y="${line - 18}" text-anchor="middle">TU</text>`;
-  $("zaxis").innerHTML = g;
+  g += `<circle cx="${px(me[key])}" cy="${line}" r="10" fill="none" stroke="var(--accent)" stroke-width="3"/>`;
+  g += `<text class="you-label" x="${px(me[key])}" y="${line - 16}" text-anchor="middle">TU</text>`;
+  $(`axis-${key}`).innerHTML = g;
 }
 
 function showResult() {
   const me = computePosition();
-  drawCompass(me);
-  drawZAxis(me);
+  view.me = me;
+  view.auto = true;
+  view.yaw = 0.9;
+  view.pitch = 0.45;
+  drawCube();
+  ["x", "y", "z"].forEach(k => drawAxis(k, me));
 
   const ranked = PARTIES.map(p => ({ ...p, a: affinity(p, me) })).sort((a, b) => b.a - a.a);
   $("ranking").innerHTML = ranked.slice(0, 6).map(p =>
@@ -479,6 +536,7 @@ function showResult() {
 }
 
 $("qcount").textContent = QUESTIONS.length;
+requestAnimationFrame(spin);
 
 // Ordine casuale delle domande a ogni nuovo test (Fisher-Yates)
 function shuffleQuestions() {
