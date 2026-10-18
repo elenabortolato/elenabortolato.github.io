@@ -88,7 +88,7 @@
       border: 1px solid var(--line); border-radius: 12px;
       padding: 12px 16px; font: 500 .98rem Inter, sans-serif;
     }
-    .answers button:hover { border-color: var(--accent); }
+    @media (hover: hover) { .answers button:hover { border-color: var(--accent); } }
     .answers button.selected { background: var(--accent-soft); border-color: var(--accent); }
     .nav { display: flex; justify-content: space-between; margin-top: 20px; gap: 8px; }
 
@@ -195,80 +195,83 @@ const PARTIES = [
 // ora: +1 se l'affermazione corrisponde alla posizione di ORA!, -1 se ORA! è contraria.
 const QUESTIONS = [
   { topic: "Pensioni", axis: "x", dir: 1, ora: 1,
-    text: "Tutte le pensioni dovrebbero essere calcolate con il metodo contributivo: ricevi in base a quanto hai versato.",
+    text: "Le pensioni dovrebbero essere calcolate in base ai contributi versati, mantenendo tutele specifiche per chi non può lavorare per invalidità o ha svolto lavori usuranti.",
     context: "L'Italia spende per le pensioni più di qualsiasi altro grande paese europeo in rapporto al PIL." },
   { topic: "Pensioni", axis: "x", dir: -1, ora: -1,
-    text: "Forme di pensione anticipata come Quota 100/103 sono un diritto da difendere, anche se costano.",
+    text: "Le pensioni anticipate come Quota 100 e Quota 103 andrebbero mantenute.",
     context: "Le uscite anticipate pesano sui conti pubblici e quindi sulle generazioni più giovani." },
   { topic: "Tasse", axis: "x", dir: 1, ora: 1,
-    text: "Le tasse sul lavoro vanno tagliate in modo deciso, finanziando il taglio con la riduzione della spesa pubblica improduttiva.",
+    text: "Per ridurre le tasse sul lavoro bisogna tagliare la spesa pubblica improduttiva.",
     context: "Il cuneo fiscale italiano è tra i più alti dell'OCSE." },
-  { topic: "Spesa pubblica", axis: "z", dir: 1, ora: 1,
-    text: "Il Superbonus 110% è stato un furto ai danni dei contribuenti, di cui tutti i partiti sono corresponsabili.",
-    context: "La misura è costata oltre 100 miliardi di euro ed è stata approvata e prorogata con il sostegno di quasi tutto il Parlamento." },
+  { topic: "Spesa pubblica", axis: "x", dir: 1, ora: 1,
+    text: "Il Superbonus 110% è stato uno spreco di denaro pubblico.",
+    context: "La misura è costata oltre 100 miliardi di euro." },
+  { topic: "Classe politica", axis: "z", dir: 1, ora: 1,
+    text: "Del costo del Superbonus sono responsabili quasi tutti i partiti, non solo chi lo ha introdotto.",
+    context: "Il Superbonus è stato introdotto nel 2020 e poi prorogato e modificato da governi di colori diversi." },
   { topic: "Giovani", axis: "z", dir: 1, ora: 1,
-    text: "I giovani lasciano l'Italia perché le tasse sul lavoro sono troppo alte, a causa di continui bonus, mance elettorali e di un sistema pensionistico arretrato.",
+    text: "Negli ultimi anni i governi hanno speso in bonus e misure elettorali risorse che servivano ai giovani.",
     context: "Ogni anno decine di migliaia di giovani, molti laureati, si trasferiscono all'estero." },
   { topic: "Classe politica", axis: "z", dir: 1, ora: 1,
-    text: "Il Movimento 5 Stelle ha tradito lo scopo per cui era nato: aveva individuato problemi reali, ma la sua classe dirigente non era all'altezza di proporre soluzioni efficaci e basate sui dati.",
+    text: "Al governo, il Movimento 5 Stelle non è stato all'altezza dei problemi che denunciava.",
     context: "Nato nel 2009 contro la \"casta\", il M5S ha poi governato con la Lega, con il PD e nel governo Draghi." },
   { topic: "Classe politica", axis: "z", dir: 1, ora: 1,
-    text: "I partiti che hanno governato negli ultimi vent'anni non sono in grado di fare le riforme di cui l'Italia ha bisogno: serve una forza politica nuova.",
+    text: "I partiti che hanno governato negli ultimi vent'anni non sono in grado di fare le riforme di cui l'Italia ha bisogno.",
     context: "Dal 2000 il PIL pro capite italiano è praticamente fermo, mentre quello degli altri grandi paesi europei è cresciuto." },
   { topic: "Metodo", axis: "z", dir: 1, ora: 1,
-    text: "Ogni nuova legge dovrebbe essere valutata prima e dopo con dati e analisi indipendenti, eliminando le misure che non funzionano.",
+    text: "Le misure pubbliche che una valutazione indipendente giudica inefficaci dovrebbero essere abolite.",
     context: "In Italia la valutazione delle politiche pubbliche è rara e spesso fatta da chi le ha proposte." },
-  { topic: "Scuola e sanità", axis: "x", dir: -1, ora: 1,
-    text: "I soldi risparmiati tagliando bonus e sprechi andrebbero reinvestiti nella scuola, nella ricerca e nella sanità pubblica.",
+  { topic: "Istruzione", axis: "x", dir: -1, ora: 1,
+    text: "La spesa pubblica per istruzione e ricerca dovrebbe aumentare.",
     context: "L'Italia spende per istruzione e ricerca meno della media europea in rapporto al PIL." },
   { topic: "Demografia", axis: "x", dir: -1, ora: 1,
-    text: "Per affrontare la crisi demografica lo Stato deve investire molto di più in asili nido e servizi per le famiglie che lavorano.",
+    text: "Lo Stato dovrebbe investire molto di più in asili nido.",
     context: "Nel 2024 in Italia sono nati meno di 370.000 bambini, il minimo dall'Unità." },
   { topic: "Industria", axis: "x", dir: -1, ora: 1,
     text: "Serve una politica industriale pubblica che indirizzi gli investimenti verso i settori tecnologici strategici.",
     context: "La produttività italiana è ferma da oltre vent'anni." },
-  { topic: "Università", axis: "z", dir: 1, ora: 1,
-    text: "L'ISEE è facilmente aggirabile: non può essere l'unico parametro per decidere chi frequenta l'università gratis o riceve aiuti pubblici.",
+  { topic: "Welfare", axis: "z", dir: 1, ora: 1,
+    text: "L'ISEE da solo non è un criterio affidabile per decidere chi ha diritto ad aiuti pubblici come l'università gratuita.",
     context: "Redditi in nero, patrimoni non dichiarati o intestati ad altri possono abbassare l'ISEE di chi non ne avrebbe diritto." },
   { topic: "Fisco", axis: "z", dir: 1, ora: 1,
-    text: "Il fisco italiano è una giungla di detrazioni, esoneri, regimi agevolati e soglie ISEE: andrebbe eliminata la gran parte delle agevolazioni per abbassare le aliquote a tutti.",
+    text: "Meglio eliminare gran parte di detrazioni, esoneri e regimi agevolati in cambio di aliquote più basse per tutti.",
     context: "Le agevolazioni fiscali in vigore sono oltre 600 e valgono circa 100 miliardi di euro l'anno di minori entrate." },
   { topic: "Famiglie", axis: "x", dir: -1, ora: 1,
-    text: "Madri e padri dovrebbero avere lo stesso congedo obbligatorio e retribuito: 5 mesi per ciascun genitore, con gli stessi diritti per chi adotta o ha un figlio in affido.",
+    text: "Padri e madri dovrebbero avere lo stesso congedo obbligatorio e retribuito, di 5 mesi ciascuno, anche in caso di adozione o affido.",
     context: "Oggi il congedo obbligatorio è di 5 mesi per le madri e di soli 10 giorni lavorativi per i padri, anche in caso di adozione o affido." },
   { topic: "Imprese", axis: "x", dir: 1, ora: 1,
     text: "Lo Stato non dovrebbe usare soldi pubblici per salvare aziende in crisi che non stanno in piedi da sole.",
     context: "Negli anni sono stati spesi miliardi per casi come Alitalia ed ex Ilva." },
   { topic: "Concorrenza", axis: "x", dir: 1, ora: 1,
-    text: "Concessioni balneari, licenze dei taxi e servizi pubblici locali andrebbero messi a gara.",
-    context: "L'UE chiede da anni all'Italia di aprire alla concorrenza questi settori." },
+    text: "Le attività oggi protette dalla concorrenza, come concessioni balneari e licenze dei taxi, andrebbero aperte a nuovi operatori.",
+    context: "L'UE chiede da anni all'Italia di mettere a gara le concessioni balneari." },
   { topic: "Pubblica amministrazione", axis: "x", dir: 1, ora: 1,
-    text: "I dipendenti pubblici dovrebbero essere valutati sui risultati, con premi per chi rende e conseguenze per chi non lo fa.",
+    text: "Stipendi e carriere dei dipendenti pubblici dovrebbero dipendere dai risultati.",
     context: "Oggi la quasi totalità dei dipendenti pubblici ottiene la valutazione massima." },
   { topic: "Lavoro", axis: "x", dir: -1, ora: -1,
     text: "Un salario minimo fissato per legge è lo strumento migliore contro il lavoro povero.",
     context: "Salari bassi e produttività ferma da 25 anni sono due facce dello stesso problema." },
   { topic: "Università", axis: "x", dir: 1, ora: 1,
-    text: "Le università pubbliche dovrebbero avere più autonomia ed essere finanziate in base alla qualità della ricerca e della didattica.",
+    text: "I fondi alle università pubbliche dovrebbero dipendere dalla qualità della ricerca e della didattica.",
     context: "Nessun ateneo italiano è tra i primi 100 nelle principali classifiche mondiali." },
   { topic: "Scuola", axis: "z", dir: 1, ora: 1,
-    text: "La scuola dovrebbe avere un percorso unico e comune fino a 16 anni, con più inglese, matematica e basi di economia, per alzare il livello degli studenti dei professionali e far ripartire l'ascensore sociale.",
+    text: "Tutti gli studenti dovrebbero seguire un percorso scolastico comune fino a 16 anni, rinviando la scelta tra licei, tecnici e professionali.",
     context: "Oggi si sceglie l'indirizzo a 14 anni: la scelta dipende molto dal titolo di studio dei genitori e alle prove INVALSI gli studenti dei professionali restano molto indietro rispetto a quelli dei licei." },
   { topic: "Giustizia", axis: "z", dir: 1, ora: 1,
-    text: "Ogni grado di giudizio dovrebbe avere tempi massimi certi, e tribunali e magistrati andrebbero valutati con dati pubblici su durata e qualità delle sentenze.",
+    text: "Ogni grado di giudizio dovrebbe avere una durata massima stabilita per legge.",
     context: "Secondo il Quadro di valutazione UE della giustizia, i processi civili italiani sono tra i più lenti dell'Unione europea." },
   { topic: "Sanità", axis: "x", dir: -1, ora: 1,
-    text: "Il Servizio sanitario nazionale va rafforzato con più investimenti pubblici, più personale, medicina territoriale e sanità digitale, per ridurre le differenze tra Nord e Sud.",
+    text: "La spesa pubblica per la sanità dovrebbe aumentare fino al livello degli altri grandi paesi europei.",
     context: "La spesa sanitaria pubblica è di circa 2.900 euro a persona in Italia, contro circa 4.400 in Francia e oltre 5.800 in Germania." },
   { topic: "Sanità", axis: "x", dir: 1, ora: 1,
-    text: "La sanità privata va regolata meglio e usata in modo mirato dal Servizio sanitario nazionale per abbattere le liste d'attesa, pagandola in base ai risultati.",
+    text: "Il Servizio sanitario nazionale dovrebbe usare di più le strutture private convenzionate per ridurre le liste d'attesa.",
     context: "Per molte visite ed esami nel pubblico si aspettano mesi, e sempre più persone pagano di tasca propria o rinunciano a curarsi." },
   { topic: "Energia", axis: "x", dir: 1, ora: 1,
     text: "L'Italia dovrebbe tornare a produrre energia nucleare.",
     context: "L'Italia importa gran parte dell'energia che consuma, anche dalla Francia, che usa il nucleare." },
   { topic: "Europa", axis: "y", dir: 1, ora: 1,
-    text: "Serve un'Europa più integrata, con una difesa comune e un bilancio comune.",
-    context: "Da soli, i paesi europei pesano poco di fronte a Stati Uniti e Cina." },
+    text: "L'Unione europea dovrebbe avere una difesa comune.",
+    context: "Da soli, i paesi europei pesano poco di fronte a Stati Uniti, Cina e Russia." },
   { topic: "Europa", axis: "y", dir: 1, ora: 1,
     text: "Il diritto di veto dei singoli Stati nelle decisioni UE andrebbe abolito.",
     context: "Oggi un solo governo può bloccare sanzioni, aiuti o riforme volute da tutti gli altri." },
@@ -276,11 +279,14 @@ const QUESTIONS = [
     text: "Quando le norme nazionali e quelle europee sono in conflitto, dovrebbero prevalere quelle italiane.",
     context: "" },
   { topic: "Politica estera", axis: "y", dir: 1, ora: 1,
-    text: "Il diritto internazionale va difeso ovunque: l'Italia deve sostenere l'Ucraina, anche militarmente, e allo stesso modo riconoscere lo Stato di Palestina nei confini del 1967, con sanzioni mirate contro i leader israeliani responsabili di violazioni.",
-    context: "Francia, Regno Unito e Spagna sostengono l'Ucraina e hanno anche riconosciuto lo Stato di Palestina." },
+    text: "L'Italia dovrebbe continuare a sostenere l'Ucraina, anche militarmente.",
+    context: "" },
   { topic: "Politica estera", axis: "y", dir: 1, ora: 1,
-    text: "L'Europa deve rafforzare la propria difesa e continuare a sostenere l'Ucraina anche senza gli Stati Uniti, rifiutando qualsiasi accordo tra Trump e Putin che premi l'aggressione russa e violi il diritto internazionale.",
+    text: "Un accordo di pace tra Trump e Putin che lasci alla Russia i territori occupati sarebbe inaccettabile.",
     context: "Con Trump gli Stati Uniti hanno ridotto il sostegno all'Ucraina e hanno trattato direttamente con la Russia sul futuro della guerra." },
+  { topic: "Politica estera", axis: "y", dir: 1, ora: 1,
+    text: "L'Italia dovrebbe riconoscere lo Stato di Palestina.",
+    context: "Francia, Regno Unito, Spagna e altri paesi europei hanno già riconosciuto lo Stato di Palestina." },
   { topic: "Diritti civili", axis: "y", dir: 1, ora: 1,
     text: "Serve una legge che permetta il suicidio medicalmente assistito a chi soffre di una malattia irreversibile, nei limiti indicati dalla Corte costituzionale.",
     context: "Nel 2019 la Corte costituzionale ha reso lecito il suicidio assistito a precise condizioni e ha chiesto al Parlamento di approvare una legge." },
@@ -370,7 +376,9 @@ function project(x, y, z) {
 
 function drawCube() {
   const me = view.me;
-  let g = "";
+  let g = "<defs>" + ["x", "y", "z"].map(k =>
+    `<marker id="arr-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="${AXES[k].color}"/></marker>`).join("") + "</defs>";
   const corners = [];
   for (const x of [-10, 10]) for (const y of [-10, 10]) for (const z of [-10, 10]) corners.push([x, y, z]);
   corners.forEach((a, i) => corners.forEach((b, j) => {
@@ -385,7 +393,7 @@ function drawCube() {
     const v = t => ({ x: k === "x" ? t : 0, y: k === "y" ? t : 0, z: k === "z" ? t : 0 });
     const a = v(-10), b = v(10);
     const p = project(a.x, a.y, a.z), q = project(b.x, b.y, b.z);
-    g += `<line x1="${p.sx}" y1="${p.sy}" x2="${q.sx}" y2="${q.sy}" stroke="${AXES[k].color}" stroke-width="1.6" opacity=".7"/>`;
+    g += `<line x1="${p.sx}" y1="${p.sy}" x2="${q.sx}" y2="${q.sy}" stroke="${AXES[k].color}" stroke-width="1.6" marker-start="url(#arr-${k})" marker-end="url(#arr-${k})"/>`;
     const ln = v(-12.5), lp = v(12.5);
     const n = project(ln.x, ln.y, ln.z), m = project(lp.x, lp.y, lp.z);
     g += `<text class="compass-label" x="${n.sx}" y="${n.sy + 4}" text-anchor="middle" style="fill:${AXES[k].color}">${AXES[k].neg}</text>`;
