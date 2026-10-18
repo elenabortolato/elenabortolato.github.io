@@ -129,7 +129,7 @@
 
   <section id="intro">
     <h1>Bussola Politica Italiana</h1>
-    <p class="lead">29 affermazioni sui temi che decideranno il futuro dell'Italia: pensioni, tasse, scuola, energia, Europa. Rispondi d'istinto e scopri dove ti collochi rispetto ai partiti italiani.</p>
+    <p class="lead">30 affermazioni sui temi che decideranno il futuro dell'Italia: pensioni, tasse, scuola, energia, Europa. Rispondi d'istinto e scopri dove ti collochi rispetto ai partiti italiani.</p>
     <div class="card">
       <p style="margin-top:0">Ogni risposta ti sposta su tre assi:</p>
       <ul>
@@ -297,6 +297,10 @@ const QUESTIONS = [
     text: "Ogni grado di giudizio dovrebbe avere tempi massimi certi, e tribunali e magistrati andrebbero valutati con dati pubblici su durata e qualità delle sentenze.",
     context: "Secondo il Quadro di valutazione UE della giustizia, i processi civili italiani sono tra i più lenti dell'Unione europea.",
     thesis: "Tempi certi per i processi e tribunali valutati con dati pubblici" },
+  { topic: "Sanità", axis: "z", dir: 1, ora: 1,
+    text: "Ogni ospedale e ogni ASL dovrebbe pubblicare i dati su liste d'attesa ed esiti delle cure, e chi non raggiunge standard minimi dovrebbe essere riorganizzato, anche cambiando i vertici.",
+    context: "Tra le regioni italiane ci sono enormi differenze nella qualità delle cure, e ogni anno molti pazienti si spostano in un'altra regione per farsi curare.",
+    thesis: "Sanità valutata sugli esiti, con dati pubblici su attese e cure" },
   { topic: "Energia", axis: "x", dir: 1, ora: 1,
     text: "L'Italia dovrebbe tornare a produrre energia nucleare.",
     context: "L'Italia importa gran parte dell'energia che consuma, anche dalla Francia, che usa il nucleare.",
@@ -474,7 +478,15 @@ function showResult() {
   show("result");
 }
 
-$("start").onclick = () => { current = 0; answers.fill(null); renderQuestion(); show("quiz"); };
+// Ordine casuale delle domande a ogni nuovo test (Fisher-Yates)
+function shuffleQuestions() {
+  for (let i = QUESTIONS.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [QUESTIONS[i], QUESTIONS[j]] = [QUESTIONS[j], QUESTIONS[i]];
+  }
+}
+
+$("start").onclick = () => { shuffleQuestions(); current = 0; answers.fill(null); renderQuestion(); show("quiz"); };
 $("back").onclick = () => { if (current > 0) { current--; renderQuestion(); } };
 $("restart").onclick = () => { answers.fill(null); show("intro"); };
 $("share").onclick = async () => {
