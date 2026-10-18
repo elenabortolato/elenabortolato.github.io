@@ -129,7 +129,7 @@
 
   <section id="intro">
     <h1>Bussola Politica Italiana</h1>
-    <p class="lead">31 affermazioni sui temi che decideranno il futuro dell'Italia: pensioni, tasse, scuola, energia, Europa. Rispondi d'istinto e scopri dove ti collochi rispetto ai partiti italiani.</p>
+    <p class="lead"><span id="qcount">31</span> affermazioni sui temi che decideranno il futuro dell'Italia: pensioni, fisco, scuola e università, sanità, giustizia, famiglie, lavoro, energia, Europa e diritti. Rispondi d'istinto e scopri dove ti collochi rispetto ai partiti italiani.</p>
     <div class="card">
       <p style="margin-top:0">Ogni risposta ti sposta su tre assi:</p>
       <ul>
@@ -481,6 +481,8 @@ function showResult() {
   $("bar").style.width = "100%";
   show("result");
 }
+
+$("qcount").textContent = QUESTIONS.length;
 
 // Ordine casuale delle domande a ogni nuovo test (Fisher-Yates)
 function shuffleQuestions() {
