@@ -106,14 +106,9 @@
     .ranking .bar { grid-column: 1 / -1; height: 6px; background: var(--grid); border-radius: 99px; overflow: hidden; }
     .ranking .bar > div { height: 100%; border-radius: 99px; }
     .ranking .pct { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: .9rem; }
-    .big { font-family: Fraunces, Georgia, serif; font-size: 2.4rem; font-weight: 600; color: var(--accent); line-height: 1; }
-    .grid2 { display: grid; gap: 16px; margin-top: 16px; }
-    @media (min-width: 640px) { .grid2 { grid-template-columns: 1fr 1fr; } }
     .note { color: var(--muted); font-size: .82rem; margin-top: 24px; }
     .note a, .cta a { color: var(--accent); }
     .cta { margin-top: 16px; padding: 16px 20px; border-radius: 12px; background: var(--accent-soft); }
-    .theses { padding-left: 18px; margin: 8px 0 0; }
-    .theses li { margin-bottom: 6px; font-size: .93rem; }
   </style>
 </head>
 <body>
@@ -155,17 +150,9 @@
       <h3>Metodo</h3>
       <svg id="axis-z" viewBox="0 0 440 150" role="img" aria-label="Asse vecchia politica – discontinuità"></svg>
     </div>
-    <div class="grid2">
-      <div class="card">
-        <h2>Partiti più vicini</h2>
-        <ol class="ranking" id="ranking"></ol>
-      </div>
-      <div class="card">
-        <h2>Tu e le tesi di ORA!</h2>
-        <div class="big" id="oraPct"></div>
-        <p style="color:var(--muted);margin:6px 0 0">delle tesi programmatiche di ORA! presenti nel test trova il tuo accordo.</p>
-        <ul class="theses" id="theses"></ul>
-      </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Partiti più vicini</h2>
+      <ol class="ranking" id="ranking"></ol>
     </div>
     <div class="cta">
       Vuoi approfondire? Leggi le <a href="https://ora-italia.it/proposta/" target="_blank" rel="noopener">proposte di ORA!</a>
@@ -205,105 +192,83 @@ const PARTIES = [
 ];
 
 // axis: "x" | "y" | "z"; dir: +1 se essere d'accordo sposta verso mercato / europeismo / discontinuità.
-// ora: +1 se la tesi corrisponde alla posizione di ORA!, -1 se ORA! è contraria.
+// ora: +1 se l'affermazione corrisponde alla posizione di ORA!, -1 se ORA! è contraria.
 const QUESTIONS = [
   { topic: "Pensioni", axis: "x", dir: 1, ora: 1,
     text: "Tutte le pensioni dovrebbero essere calcolate con il metodo contributivo: ricevi in base a quanto hai versato.",
-    context: "L'Italia spende per le pensioni più di qualsiasi altro grande paese europeo in rapporto al PIL.",
-    thesis: "Sistema pensionistico unico e contributivo, sul modello svedese" },
+    context: "L'Italia spende per le pensioni più di qualsiasi altro grande paese europeo in rapporto al PIL." },
   { topic: "Pensioni", axis: "x", dir: -1, ora: -1,
     text: "Forme di pensione anticipata come Quota 100/103 sono un diritto da difendere, anche se costano.",
     context: "Le uscite anticipate pesano sui conti pubblici e quindi sulle generazioni più giovani." },
   { topic: "Tasse", axis: "x", dir: 1, ora: 1,
     text: "Le tasse sul lavoro vanno tagliate in modo deciso, finanziando il taglio con la riduzione della spesa pubblica improduttiva.",
-    context: "Il cuneo fiscale italiano è tra i più alti dell'OCSE.",
-    thesis: "Spostare il carico fiscale via dal lavoro e ridurre il cuneo" },
+    context: "Il cuneo fiscale italiano è tra i più alti dell'OCSE." },
   { topic: "Spesa pubblica", axis: "z", dir: 1, ora: 1,
     text: "Il Superbonus 110% è stato un furto ai danni dei contribuenti, di cui tutti i partiti sono corresponsabili.",
-    context: "La misura è costata oltre 100 miliardi di euro ed è stata approvata e prorogata con il sostegno di quasi tutto il Parlamento.",
-    thesis: "Basta bonus a pioggia come il Superbonus" },
+    context: "La misura è costata oltre 100 miliardi di euro ed è stata approvata e prorogata con il sostegno di quasi tutto il Parlamento." },
   { topic: "Giovani", axis: "z", dir: 1, ora: 1,
     text: "I giovani lasciano l'Italia perché le tasse sul lavoro sono troppo alte, a causa di continui bonus, mance elettorali e di un sistema pensionistico arretrato.",
-    context: "Ogni anno decine di migliaia di giovani, molti laureati, si trasferiscono all'estero.",
-    thesis: "Meno spesa clientelare, meno tasse sul lavoro dei giovani" },
+    context: "Ogni anno decine di migliaia di giovani, molti laureati, si trasferiscono all'estero." },
   { topic: "Classe politica", axis: "z", dir: 1, ora: 1,
     text: "Il Movimento 5 Stelle ha tradito lo scopo per cui era nato: aveva individuato problemi reali, ma la sua classe dirigente non era all'altezza di proporre soluzioni efficaci e basate sui dati.",
-    context: "Nato nel 2009 contro la \"casta\", il M5S ha poi governato con la Lega, con il PD e nel governo Draghi.",
-    thesis: "Una classe dirigente competente e politiche basate sui dati" },
+    context: "Nato nel 2009 contro la \"casta\", il M5S ha poi governato con la Lega, con il PD e nel governo Draghi." },
   { topic: "Classe politica", axis: "z", dir: 1, ora: 1,
     text: "I partiti che hanno governato negli ultimi vent'anni non sono in grado di fare le riforme di cui l'Italia ha bisogno: serve una forza politica nuova.",
-    context: "Dal 2000 il PIL pro capite italiano è praticamente fermo, mentre quello degli altri grandi paesi europei è cresciuto.",
-    thesis: "Una forza politica nuova, di proposta e non di protesta" },
+    context: "Dal 2000 il PIL pro capite italiano è praticamente fermo, mentre quello degli altri grandi paesi europei è cresciuto." },
   { topic: "Metodo", axis: "z", dir: 1, ora: 1,
     text: "Ogni nuova legge dovrebbe essere valutata prima e dopo con dati e analisi indipendenti, eliminando le misure che non funzionano.",
-    context: "In Italia la valutazione delle politiche pubbliche è rara e spesso fatta da chi le ha proposte.",
-    thesis: "Politiche pubbliche valutate con dati e analisi indipendenti" },
+    context: "In Italia la valutazione delle politiche pubbliche è rara e spesso fatta da chi le ha proposte." },
   { topic: "Scuola e sanità", axis: "x", dir: -1, ora: 1,
     text: "I soldi risparmiati tagliando bonus e sprechi andrebbero reinvestiti nella scuola, nella ricerca e nella sanità pubblica.",
-    context: "L'Italia spende per istruzione e ricerca meno della media europea in rapporto al PIL.",
-    thesis: "Più investimenti pubblici in scuola, ricerca e sanità" },
+    context: "L'Italia spende per istruzione e ricerca meno della media europea in rapporto al PIL." },
   { topic: "Demografia", axis: "x", dir: -1, ora: 1,
     text: "Per affrontare la crisi demografica lo Stato deve investire molto di più in asili nido e servizi per le famiglie che lavorano.",
-    context: "Nel 2024 in Italia sono nati meno di 370.000 bambini, il minimo dall'Unità.",
-    thesis: "Servizi per le famiglie contro la crisi demografica" },
+    context: "Nel 2024 in Italia sono nati meno di 370.000 bambini, il minimo dall'Unità." },
   { topic: "Industria", axis: "x", dir: -1, ora: 1,
     text: "Serve una politica industriale pubblica che indirizzi gli investimenti verso i settori tecnologici strategici.",
-    context: "La produttività italiana è ferma da oltre vent'anni.",
-    thesis: "Una politica industriale per i settori strategici" },
+    context: "La produttività italiana è ferma da oltre vent'anni." },
   { topic: "Università", axis: "z", dir: 1, ora: 1,
     text: "L'ISEE è facilmente aggirabile: non può essere l'unico parametro per decidere chi frequenta l'università gratis o riceve aiuti pubblici.",
-    context: "Redditi in nero, patrimoni non dichiarati o intestati ad altri possono abbassare l'ISEE di chi non ne avrebbe diritto.",
-    thesis: "Controlli incrociati sui dati: aiuti a chi ne ha davvero bisogno" },
+    context: "Redditi in nero, patrimoni non dichiarati o intestati ad altri possono abbassare l'ISEE di chi non ne avrebbe diritto." },
   { topic: "Fisco", axis: "z", dir: 1, ora: 1,
     text: "Il fisco italiano è una giungla di detrazioni, esoneri, regimi agevolati e soglie ISEE: andrebbe eliminata la gran parte delle agevolazioni per abbassare le aliquote a tutti.",
-    context: "Le agevolazioni fiscali in vigore sono oltre 600 e valgono circa 100 miliardi di euro l'anno di minori entrate.",
-    thesis: "Un fisco semplice: meno agevolazioni, aliquote più basse per tutti" },
+    context: "Le agevolazioni fiscali in vigore sono oltre 600 e valgono circa 100 miliardi di euro l'anno di minori entrate." },
   { topic: "Famiglie", axis: "x", dir: -1, ora: 1,
     text: "Madri e padri dovrebbero avere lo stesso congedo obbligatorio e retribuito: 5 mesi per ciascun genitore, con gli stessi diritti per chi adotta o ha un figlio in affido.",
-    context: "Oggi il congedo obbligatorio è di 5 mesi per le madri e di soli 10 giorni lavorativi per i padri, anche in caso di adozione o affido.",
-    thesis: "Congedi paritari: 5 mesi per ciascun genitore, anche per chi adotta" },
+    context: "Oggi il congedo obbligatorio è di 5 mesi per le madri e di soli 10 giorni lavorativi per i padri, anche in caso di adozione o affido." },
   { topic: "Imprese", axis: "x", dir: 1, ora: 1,
     text: "Lo Stato non dovrebbe usare soldi pubblici per salvare aziende in crisi che non stanno in piedi da sole.",
     context: "Negli anni sono stati spesi miliardi per casi come Alitalia ed ex Ilva." },
   { topic: "Concorrenza", axis: "x", dir: 1, ora: 1,
     text: "Concessioni balneari, licenze dei taxi e servizi pubblici locali andrebbero messi a gara.",
-    context: "L'UE chiede da anni all'Italia di aprire alla concorrenza questi settori.",
-    thesis: "Più concorrenza e meno rendite di posizione" },
+    context: "L'UE chiede da anni all'Italia di aprire alla concorrenza questi settori." },
   { topic: "Pubblica amministrazione", axis: "x", dir: 1, ora: 1,
     text: "I dipendenti pubblici dovrebbero essere valutati sui risultati, con premi per chi rende e conseguenze per chi non lo fa.",
-    context: "Oggi la quasi totalità dei dipendenti pubblici ottiene la valutazione massima.",
-    thesis: "Riforma della PA basata su merito e responsabilità" },
+    context: "Oggi la quasi totalità dei dipendenti pubblici ottiene la valutazione massima." },
   { topic: "Lavoro", axis: "x", dir: -1, ora: -1,
     text: "Un salario minimo fissato per legge è lo strumento migliore contro il lavoro povero.",
     context: "Salari bassi e produttività ferma da 25 anni sono due facce dello stesso problema." },
   { topic: "Università", axis: "x", dir: 1, ora: 1,
     text: "Le università pubbliche dovrebbero avere più autonomia ed essere finanziate in base alla qualità della ricerca e della didattica.",
-    context: "Nessun ateneo italiano è tra i primi 100 nelle principali classifiche mondiali.",
-    thesis: "Università autonome e valutate, sul modello californiano" },
+    context: "Nessun ateneo italiano è tra i primi 100 nelle principali classifiche mondiali." },
   { topic: "Scuola", axis: "z", dir: 1, ora: 1,
     text: "La scuola dovrebbe avere un percorso unico e comune fino a 16 anni, con più inglese, matematica e basi di economia, per alzare il livello degli studenti dei professionali e far ripartire l'ascensore sociale.",
-    context: "Oggi si sceglie l'indirizzo a 14 anni: la scelta dipende molto dal titolo di studio dei genitori e alle prove INVALSI gli studenti dei professionali restano molto indietro rispetto a quelli dei licei.",
-    thesis: "Scuola unica fino a 16 anni per ridurre le disuguaglianze" },
+    context: "Oggi si sceglie l'indirizzo a 14 anni: la scelta dipende molto dal titolo di studio dei genitori e alle prove INVALSI gli studenti dei professionali restano molto indietro rispetto a quelli dei licei." },
   { topic: "Giustizia", axis: "z", dir: 1, ora: 1,
     text: "Ogni grado di giudizio dovrebbe avere tempi massimi certi, e tribunali e magistrati andrebbero valutati con dati pubblici su durata e qualità delle sentenze.",
-    context: "Secondo il Quadro di valutazione UE della giustizia, i processi civili italiani sono tra i più lenti dell'Unione europea.",
-    thesis: "Tempi certi per i processi e tribunali valutati con dati pubblici" },
+    context: "Secondo il Quadro di valutazione UE della giustizia, i processi civili italiani sono tra i più lenti dell'Unione europea." },
   { topic: "Sanità", axis: "x", dir: -1, ora: 1,
     text: "Il Servizio sanitario nazionale va rafforzato con più investimenti pubblici, più personale, medicina territoriale e sanità digitale, per ridurre le differenze tra Nord e Sud.",
-    context: "La spesa sanitaria pubblica è di circa 2.900 euro a persona in Italia, contro circa 4.400 in Francia e oltre 5.800 in Germania.",
-    thesis: "Più investimenti pubblici, personale e medicina territoriale nel SSN" },
+    context: "La spesa sanitaria pubblica è di circa 2.900 euro a persona in Italia, contro circa 4.400 in Francia e oltre 5.800 in Germania." },
   { topic: "Sanità", axis: "x", dir: 1, ora: 1,
     text: "La sanità privata va regolata meglio e usata in modo mirato dal Servizio sanitario nazionale per abbattere le liste d'attesa, pagandola in base ai risultati.",
-    context: "Per molte visite ed esami nel pubblico si aspettano mesi, e sempre più persone pagano di tasca propria o rinunciano a curarsi.",
-    thesis: "Privato regolato e usato con criterio per ridurre le liste d'attesa" },
+    context: "Per molte visite ed esami nel pubblico si aspettano mesi, e sempre più persone pagano di tasca propria o rinunciano a curarsi." },
   { topic: "Energia", axis: "x", dir: 1, ora: 1,
     text: "L'Italia dovrebbe tornare a produrre energia nucleare.",
-    context: "L'Italia importa gran parte dell'energia che consuma, anche dalla Francia, che usa il nucleare.",
-    thesis: "Reintrodurre il nucleare accanto alle rinnovabili" },
+    context: "L'Italia importa gran parte dell'energia che consuma, anche dalla Francia, che usa il nucleare." },
   { topic: "Europa", axis: "y", dir: 1, ora: 1,
     text: "Serve un'Europa più integrata, con una difesa comune e un bilancio comune.",
-    context: "Da soli, i paesi europei pesano poco di fronte a Stati Uniti e Cina.",
-    thesis: "Un'Europa più integrata e federale" },
+    context: "Da soli, i paesi europei pesano poco di fronte a Stati Uniti e Cina." },
   { topic: "Europa", axis: "y", dir: 1, ora: 1,
     text: "Il diritto di veto dei singoli Stati nelle decisioni UE andrebbe abolito.",
     context: "Oggi un solo governo può bloccare sanzioni, aiuti o riforme volute da tutti gli altri." },
@@ -312,16 +277,13 @@ const QUESTIONS = [
     context: "" },
   { topic: "Politica estera", axis: "y", dir: 1, ora: 1,
     text: "Il diritto internazionale va difeso ovunque: l'Italia deve sostenere l'Ucraina, anche militarmente, e allo stesso modo riconoscere lo Stato di Palestina nei confini del 1967, con sanzioni mirate contro i leader israeliani responsabili di violazioni.",
-    context: "Francia, Regno Unito e Spagna sostengono l'Ucraina e hanno anche riconosciuto lo Stato di Palestina.",
-    thesis: "Diritto internazionale ovunque: con l'Ucraina e per lo Stato di Palestina" },
+    context: "Francia, Regno Unito e Spagna sostengono l'Ucraina e hanno anche riconosciuto lo Stato di Palestina." },
   { topic: "Politica estera", axis: "y", dir: 1, ora: 1,
     text: "L'Europa deve rafforzare la propria difesa e continuare a sostenere l'Ucraina anche senza gli Stati Uniti, rifiutando qualsiasi accordo tra Trump e Putin che premi l'aggressione russa e violi il diritto internazionale.",
-    context: "Con Trump gli Stati Uniti hanno ridotto il sostegno all'Ucraina e hanno trattato direttamente con la Russia sul futuro della guerra.",
-    thesis: "Un'Europa capace di difendersi: nessun premio all'aggressione russa" },
+    context: "Con Trump gli Stati Uniti hanno ridotto il sostegno all'Ucraina e hanno trattato direttamente con la Russia sul futuro della guerra." },
   { topic: "Diritti civili", axis: "y", dir: 1, ora: 1,
     text: "Serve una legge che permetta il suicidio medicalmente assistito a chi soffre di una malattia irreversibile, nei limiti indicati dalla Corte costituzionale.",
-    context: "Nel 2019 la Corte costituzionale ha reso lecito il suicidio assistito a precise condizioni e ha chiesto al Parlamento di approvare una legge.",
-    thesis: "Una legge sul fine vita che rispetti la libertà di scelta" },
+    context: "Nel 2019 la Corte costituzionale ha reso lecito il suicidio assistito a precise condizioni e ha chiesto al Parlamento di approvare una legge." },
   { topic: "Demografia", axis: "y", dir: 1, ora: 1,
     text: "Un'immigrazione regolare e qualificata è necessaria per compensare il calo demografico.",
     context: "Ogni anno la popolazione in età lavorativa si riduce di centinaia di migliaia di persone." },
@@ -381,12 +343,6 @@ function computePosition() {
   // la radice quadrata lo riporta sulla scala delle posizioni dei partiti.
   const stretch = r => Math.sign(r) * Math.sqrt(Math.abs(r)) * 10;
   return { x: stretch(sum.x / max.x), y: stretch(sum.y / max.y), z: stretch(sum.z / max.z) };
-}
-
-function oraAgreement() {
-  let agree = 0;
-  QUESTIONS.forEach((q, i) => { if ((answers[i] ?? 0) * q.ora > 0) agree++; });
-  return Math.round((agree / QUESTIONS.length) * 100);
 }
 
 function affinity(p, me) {
@@ -517,13 +473,6 @@ function showResult() {
     `<li><span>${p.name}</span><span class="pct">${p.a}%</span>
      <div class="bar"><div style="width:${p.a}%;background:${p.color}"></div></div></li>`).join("");
 
-  const pct = oraAgreement();
-  $("oraPct").textContent = `${pct}%`;
-  $("theses").innerHTML = QUESTIONS
-    .map((q, i) => ({ q, v: (answers[i] ?? 0) * q.ora }))
-    .filter(o => o.q.thesis && o.v > 0)
-    .map(o => `<li>${o.q.thesis}</li>`).join("") || "<li>Nessuna tesi condivisa… per ora!</li>";
-
   const pick = (v, pos, neg, mid) => v > 1 ? pos : v < -1 ? neg : mid;
   const ex = pick(me.x, "il mercato e la concorrenza", "l'intervento dello Stato", "un equilibrio tra Stato e mercato");
   const ey = pick(me.y, "europeista e aperto", "sovranista", "intermedio sull'Europa");
@@ -531,6 +480,7 @@ function showResult() {
     "Ti fidi della politica tradizionale.", "Sul modo di fare politica non hai una posizione netta.");
   $("summary").textContent =
     `Preferisci ${ex} e hai un orientamento ${ey}. ${ez} Il partito più vicino a te è ${ranked[0].name}.`;
+  $("share").dataset.party = ranked[0].name;
   $("bar").style.width = "100%";
   show("result");
 }
@@ -550,7 +500,7 @@ $("start").onclick = () => { shuffleQuestions(); current = 0; answers.fill(null)
 $("back").onclick = () => { if (current > 0) { current--; renderQuestion(); } };
 $("restart").onclick = () => { answers.fill(null); show("intro"); };
 $("share").onclick = async () => {
-  const text = `Ho fatto la Bussola Politica Italiana: sono d'accordo con il ${$("oraPct").textContent} delle tesi di ORA!`;
+  const text = `Ho fatto la Bussola Politica Italiana: il partito più vicino a me è ${$("share").dataset.party}. E tu?`;
   try {
     if (navigator.share) await navigator.share({ title: document.title, text, url: location.href });
     else { await navigator.clipboard.writeText(`${text} ${location.href}`); $("share").textContent = "Link copiato!"; }
