@@ -295,6 +295,9 @@ const QUESTIONS = [
   { id: "trumpPutin", topic: "Politica estera", axis: "y", dir: 1, ora: 2,
     text: "Un accordo di pace tra Trump e Putin che lasci alla Russia i territori occupati sarebbe inaccettabile.",
     context: "Con Trump gli Stati Uniti hanno ridotto il sostegno all'Ucraina e hanno trattato direttamente con la Russia sul futuro della guerra." },
+  { id: "iran", topic: "Politica estera", axis: "y", dir: 1, ora: 2,
+    text: "La guerra di Trump e Netanyahu contro l'Iran è illegale secondo il diritto internazionale.",
+    context: "Stati Uniti e Israele attaccano l'Iran dal 28 febbraio 2026, senza un'autorizzazione del Consiglio di sicurezza dell'ONU." },
   { id: "palestina", topic: "Politica estera", axis: "y", dir: 1, ora: 2,
     text: "L'Italia dovrebbe riconoscere lo Stato di Palestina.",
     context: "Francia, Regno Unito, Spagna e altri paesi europei hanno già riconosciuto lo Stato di Palestina." },
@@ -313,6 +316,7 @@ const QUESTIONS = [
 // Di default deriva dalla posizione del partito sull'asse della domanda; qui sotto
 // le eccezioni in cui l'asse da solo darebbe una risposta lontana dalla posizione nota.
 const VOTER_OVERRIDES = {
+  iran:          { "PD": 2, "M5S": 2, "AVS": 2, "+Europa": 1, "IV": 0, "Azione": 0, "PLD": -1, "FI": -1, "Noi Moderati": -1, "FdI": -1, "Lega": -2, "FN": -1 },
   istruzione: { "PLD": 0 },
   industria:     { "FdI": 1, "Lega": 1, "FN": 2, "M5S": 2, "AVS": 2, "PD": 1, "FI": -1, "Noi Moderati": 0, "Azione": 0, "IV": -1, "+Europa": -2, "PLD": -2 },
   comuni:        { "Lega": 2, "FN": 0, "FdI": -1, "FI": 1, "Noi Moderati": 1, "PD": 1, "M5S": 0, "AVS": 0, "Azione": 0, "IV": 0, "+Europa": 1, "PLD": 1 },
