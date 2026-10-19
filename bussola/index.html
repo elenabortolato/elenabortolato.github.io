@@ -238,8 +238,8 @@ const QUESTIONS = [
   { id: "industria", topic: "Industria", axis: "x", dir: -1, ora: -2,
     text: "Dovrebbe essere lo Stato a scegliere i settori industriali su cui puntare e a finanziare direttamente le imprese di quei settori.",
     context: "L'alternativa è che lo Stato crei le condizioni (energia, ricerca, infrastrutture, regole semplici) e lasci al mercato la scelta di dove investire." },
-  { id: "isee", topic: "Welfare", axis: "z", dir: -1, ora: -2,
-    text: "L'ISEE è uno strumento adeguato per decidere chi ha diritto ad aiuti pubblici come l'università gratuita.",
+  { id: "isee", topic: "Università", axis: "z", dir: -1, ora: -2,
+    text: "L'accesso gratuito all'università dovrebbe dipendere dall'ISEE della famiglia.",
     context: "L'alternativa è che l'ISEE, oggi facile da aggirare, non rispecchi pienamente la situazione reale, e che un diritto universale come l'università non dipenda affatto dall'ISEE." },
   { id: "fisco", topic: "Fisco", axis: "z", dir: 1, ora: 1,
     text: "Meglio eliminare gran parte di detrazioni, esoneri e regimi agevolati in cambio di aliquote più basse per tutti.",
@@ -316,6 +316,7 @@ const QUESTIONS = [
 // Di default deriva dalla posizione del partito sull'asse della domanda; qui sotto
 // le eccezioni in cui l'asse da solo darebbe una risposta lontana dalla posizione nota.
 const VOTER_OVERRIDES = {
+  isee:          { "AVS": -2, "M5S": -1, "PD": -1, "+Europa": 0, "IV": 1, "Azione": 1, "PLD": 1, "FI": 1, "Noi Moderati": 1, "FdI": 1, "Lega": 1, "FN": 0 },
   iran:          { "PD": 2, "M5S": 2, "AVS": 2, "+Europa": 1, "IV": 0, "Azione": 0, "PLD": -1, "FI": -1, "Noi Moderati": -1, "FdI": -1, "Lega": -2, "FN": -1 },
   istruzione: { "PLD": 0 },
   industria:     { "FdI": 1, "Lega": 1, "FN": 2, "M5S": 2, "AVS": 2, "PD": 1, "FI": -1, "Noi Moderati": 0, "Azione": 0, "IV": -1, "+Europa": -2, "PLD": -2 },
