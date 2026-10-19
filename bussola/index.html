@@ -80,7 +80,8 @@
     .meta { display: flex; justify-content: space-between; color: var(--muted); font-size: .85rem; margin-bottom: 8px; }
     .topic { text-transform: uppercase; letter-spacing: .08em; font-weight: 600; color: var(--accent); }
     .question { font-family: Fraunces, Georgia, serif; font-size: clamp(1.2rem, 3.6vw, 1.5rem); margin: 4px 0 8px; }
-    .context { color: var(--muted); font-size: .92rem; margin: 0 0 20px; }
+    .question { margin-bottom: 20px; }
+    .context { color: var(--muted); font-size: .9rem; margin: 14px 0 0; padding: 10px 14px; border-left: 3px solid var(--line); background: var(--bg); border-radius: 0 10px 10px 0; }
     .answers { display: grid; gap: 8px; }
     .answers button {
       text-align: left; cursor: pointer;
@@ -133,8 +134,8 @@
     <div class="card">
       <div class="meta"><span class="topic" id="topic"></span><span id="count"></span></div>
       <p class="question" id="question"></p>
-      <p class="context" id="context"></p>
       <div class="answers" id="answers"></div>
+      <p class="context" id="context"></p>
       <div class="nav">
         <button class="btn ghost" id="back">← Indietro</button>
       </div>
