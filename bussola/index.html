@@ -235,9 +235,9 @@ const QUESTIONS = [
   { id: "asili", topic: "Demografia", axis: "x", dir: -1, ora: 1,
     text: "Lo Stato dovrebbe investire molto di più in asili nido.",
     context: "Nel 2024 in Italia sono nati meno di 370.000 bambini, il minimo dall'Unità." },
-  { id: "industria", topic: "Industria", axis: "x", dir: -1, ora: 1,
-    text: "Serve una politica industriale pubblica che indirizzi gli investimenti verso i settori tecnologici strategici.",
-    context: "La produttività italiana è ferma da oltre vent'anni." },
+  { id: "industria", topic: "Industria", axis: "x", dir: -1, ora: -2,
+    text: "Dovrebbe essere lo Stato a scegliere i settori industriali su cui puntare e a finanziare direttamente le imprese di quei settori.",
+    context: "L'alternativa è che lo Stato crei le condizioni (energia, ricerca, infrastrutture, regole semplici) e lasci al mercato la scelta di dove investire." },
   { id: "isee", topic: "Welfare", axis: "z", dir: -1, ora: -2,
     text: "L'ISEE è uno strumento adeguato per decidere chi ha diritto ad aiuti pubblici come l'università gratuita.",
     context: "Redditi in nero, patrimoni non dichiarati o intestati ad altri possono abbassare l'ISEE di chi non ne avrebbe diritto." },
@@ -313,6 +313,7 @@ const QUESTIONS = [
 // Di default deriva dalla posizione del partito sull'asse della domanda; qui sotto
 // le eccezioni in cui l'asse da solo darebbe una risposta lontana dalla posizione nota.
 const VOTER_OVERRIDES = {
+  industria:     { "FdI": 1, "Lega": 1, "FN": 2, "M5S": 2, "AVS": 2, "PD": 1, "FI": -1, "Noi Moderati": 0, "Azione": -1, "IV": -1, "+Europa": -2, "PLD": -2 },
   comuni:        { "Lega": 2, "FN": 0, "FdI": -1, "FI": 1, "Noi Moderati": 1, "PD": 1, "M5S": 0, "AVS": 0, "Azione": 0, "IV": 0, "+Europa": 1, "PLD": 1 },
   tasse:         { "Lega": 2, "FI": 1, "FdI": 1, "FN": 1, "Noi Moderati": 1, "PD": -2, "AVS": -2, "M5S": -1, "+Europa": -1, "Azione": -1, "IV": -1, "PLD": 0 },
   superbonus:    { "M5S": 2, "AVS": 1, "PD": 0, "FdI": -2, "Lega": -1, "FI": 0, "Noi Moderati": -1, "FN": -1, "Azione": -2, "IV": -1, "+Europa": -2, "PLD": -2 },
